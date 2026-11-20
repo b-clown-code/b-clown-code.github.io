@@ -1,6 +1,6 @@
 ---
 title: Brandon Treglown
-description: Systems engineer. I direct the building of test and infrastructure around ML and hardware work, and check my own results.
+description: A personal research lab exploring machine learning, hardware, and the questions that arise along the way.
 claims: [vl-e4b-vs-stock-e4b, vl-sim-pass-definition, vl-model-sizes, gpuq-jobs, corpus-v9]
 ---
 
@@ -8,7 +8,7 @@ claims: [vl-e4b-vs-stock-e4b, vl-sim-pass-definition, vl-model-sizes, gpuq-jobs,
 
 Computer Systems Engineering, Arizona State University (B.S.E., December 2026).
 
-I direct AI coding agents to build test pipelines, schedulers and verification harnesses for machine-learning and hardware projects, on lab hardware I set up myself. The agents write all of the code; I decide what gets built, set the rules they work under, and review whether the results hold up. Most of what's here is about making a result trustworthy: checking generated hardware code in a simulator before counting it, comparing FPGA output word for word against simulation, and keeping a record when my own numbers turn out to be wrong.
+This is my personal research lab, where I work with AI assistants to build the code behind my machine-learning and hardware projects. I follow questions that interest me, look closely at the results, and explore new ways forward when an experiment or development path doesn't work out.
 
 ## Selected work
 

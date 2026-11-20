@@ -13,9 +13,6 @@ const [workPart] = rest.split(/^## /m);
 const paras = head.split(/\n\s*\n/).map((s) => s.trim()).filter((s) => s && !s.startsWith('#'));
 // edu line comes first in the source; the lead paragraph is the one after it
 const [edu, leadPara = ''] = paras;
-const cut = leadPara.search(/[.!?]\s/);
-const lead = cut < 0 ? leadPara : leadPara.slice(0, cut + 1);
-const restLead = cut < 0 ? '' : leadPara.slice(cut + 2);
 const blocks = workPart.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
 const rows = blocks.filter((b) => b.startsWith('**')).map((b) => {
   const m = b.match(/^\*\*(.+?)\.\*\*\s+([^\n]*)\n\*(.+)\*\s*\n\[[^\]]*\]\(([^)]+)\)/);
@@ -27,9 +24,9 @@ const more = [...(blocks.find((b) => b.startsWith('[All')) ?? '').matchAll(/\[([
 ---
 <Base title={entry.data.title} description={entry.data.description}>
   <div class="hero">
-    <h1 class="lead">{lead}</h1>
+    <h1 class="visually-hidden">{entry.data.title}</h1>
     <div class="intro">
-      <p>{restLead}</p>
+      <p class="intro-copy">{leadPara}</p>
       <p class="sec">{edu}</p>
     </div>
   </div>

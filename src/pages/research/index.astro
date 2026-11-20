@@ -150,7 +150,7 @@ const client = {
 
   <p class="rl-foot">Paper titles, authors, years and identifiers come from the publications themselves. The problem and technique groupings, the topic descriptions and the links between papers are my own classification, made with model assistance and checked by hand. They are not the authors' terms. Agent-built page (2026); see <a href={url('/about/')}>About</a>.</p>
 
-  <script type="application/json" id="rl-data" set:html={JSON.stringify(client)} />
+  <script type="application/json" id="rl-data" set:html={JSON.stringify(client).replace(/</g, '\\u003c')} />
   <script>
     import { initResearch } from '../../scripts/research-lib';
     initResearch();
