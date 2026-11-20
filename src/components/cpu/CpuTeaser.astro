@@ -20,7 +20,7 @@ const START = 14; // a cycle with forwarding into the ALU and a branch stall clo
     };
     const sync = () => {
       const go = visible && !document.hidden;
-      if (go && !timer) timer = window.setInterval(tick, 650);
+      if (go && !timer) timer = window.setInterval(tick, 2000);
       if (!go && timer) { clearInterval(timer); timer = 0; }
     };
     new IntersectionObserver((e) => { visible = e[0].isIntersecting; sync(); }).observe(el);
