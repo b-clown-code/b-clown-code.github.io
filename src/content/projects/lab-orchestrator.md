@@ -1,7 +1,7 @@
 ---
 title: labctl — running a research lab with AI agents
 summary: A deterministic daemon that wakes short-lived AI agents from durable state, with fencing, idempotent writes, crash recovery and fault injection.
-status: Live
+status: In progress
 order: 3
 area: infrastructure
 metric: "533 agent wakes in 5.92 days"

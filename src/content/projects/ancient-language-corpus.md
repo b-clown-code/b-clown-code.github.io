@@ -1,7 +1,7 @@
 ---
 title: A provenance-tracked corpus of ancient-language text
 summary: A data pipeline that collects, catalogs and versions texts in Greek, Latin, Coptic, Akkadian, Sanskrit and other ancient languages into hash-pinned training releases.
-status: Data verified; models not evaluated
+status: In progress
 order: 6
 area: ml
 metric: "745.2M training tokens, hash-pinned releases"

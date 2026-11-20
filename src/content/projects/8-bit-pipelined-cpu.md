@@ -1,7 +1,7 @@
 ---
 title: 8-bit pipelined CPU, with a browser lab checked against its Verilog
 summary: An 8-bit Harvard CPU with a custom 16-bit instruction set and a 5-stage pipeline, designed in 2024. The browser lab steps the pipeline cycle by cycle and lets you program the earlier single-cycle version in binary on its switches; both are checked against the original Verilog.
-status: Verified (simulator matches RTL)
+status: Complete
 order: 5
 area: hardware
 metric: "330 of 330 programs match the RTL cycle for cycle"

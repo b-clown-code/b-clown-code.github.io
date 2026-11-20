@@ -1,7 +1,7 @@
 ---
 title: Training throughput on an AMD GPU
 summary: Measured which kernel and memory options actually speed up model training on an AMD R9700 under ROCm, with correctness checks on every change.
-status: Verified (one seed)
+status: Complete
 order: 5
 area: ml
 metric: "1.289× training speed at 0.867× memory"

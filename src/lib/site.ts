@@ -5,12 +5,8 @@ export const url = (p: string) => BASE + p.replace(/^\//, '');
 
 export function statusClass(status: string): string {
   const s = status.toLowerCase();
-  if (s.startsWith('verified, with caveats')) return 'caveat';
-  if (s.startsWith('verified')) return 'verified';
-  if (s.startsWith('live')) return 'live';
-  if (s.startsWith('null')) return 'off';
-  if (s.startsWith('ongoing')) return 'ongoing';
-  if (s.startsWith('data verified')) return 'caveat';
+  if (s === 'complete') return 'verified';
+  if (s === 'in progress') return 'ongoing';
   return 'off';
 }
 
