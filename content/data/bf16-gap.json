@@ -1,0 +1,36 @@
+{
+ "claims": [
+  "case-bf16-streams"
+ ],
+ "form": "bar",
+ "unit": "nats",
+ "title": "How much worse pure BF16 finished, by validation stream",
+ "caption": "Final loss of pure BF16 minus FP32 weights with BF16 autocast; higher means BF16 did worse. Only the paired gap is meaningful (the streams overlap with training data). Syriac has 9 sequences.",
+ "rows": [
+  {
+   "label": "Egyptian",
+   "value": 2.291,
+   "note": "66 sequences"
+  },
+  {
+   "label": "Ancient Greek",
+   "value": 1.605,
+   "note": "256 sequences"
+  },
+  {
+   "label": "Syriac",
+   "value": 1.591,
+   "note": "9 sequences"
+  },
+  {
+   "label": "Latin canonical",
+   "value": 1.502,
+   "note": "150 sequences"
+  },
+  {
+   "label": "Latin 170M",
+   "value": 1.236,
+   "note": "256 sequences"
+  }
+ ]
+}

@@ -1,0 +1,222 @@
+---
+// The 8-bit CPU lab, in two modes: the 5-stage pipeline (2024 RTL, cycle model in src/lib/cpu/core.ts, driven by
+// src/scripts/cpu-lab.ts) and the front panel (single-cycle switch mode, src/components/cpu/FrontPanel.astro).
+import '../../styles/cpu-lab.css';
+import { PRESETS } from '../../lib/cpu/presets';
+import FrontPanel from './FrontPanel.astro';
+const stages = [
+  { id: 'if', name: 'IF', full: 'Fetch', x: 95 },
+  { id: 'id', name: 'ID', full: 'Decode', x: 303 },
+  { id: 'ex', name: 'EX', full: 'Execute', x: 513 },
+  { id: 'mem', name: 'MEM', full: 'Memory', x: 717 },
+  { id: 'wb', name: 'WB', full: 'Write-back', x: 912 },
+];
+const bars = [
+  { id: 'ifid', x: 192, label: 'IF/ID' },
+  { id: 'idex', x: 402, label: 'ID/EX' },
+  { id: 'exmem', x: 612, label: 'EX/MEM' },
+  { id: 'memwb', x: 822, label: 'MEM/WB' },
+];
+// wire id -> path; ids are referenced by cpu-lab.ts
+const wires: [string, string][] = [
+  ['pc-imem', 'M90,198 H110'],
+  ['imem-ifid', 'M180,198 H192'],
+  ['pc-inc', 'M60,170 V150 H150 V150'],
+  ['ifid-dec', 'M204,103 H222'],
+  ['ifid-rf', 'M204,214 H242'],
+  ['dec-idex', 'M382,103 H402'],
+  ['rf-a', 'M362,196 H402'],
+  ['rf-b', 'M362,262 H402'],
+  ['idex-a', 'M414,196 H440'],
+  ['idex-b', 'M414,262 H440'],
+  ['idex-imm', 'M414,120 H430 V160 H476 V176'],
+  ['mux-a', 'M468,202 H500'],
+  ['mux-b', 'M468,262 H500'],
+  ['alu-exmem', 'M570,232 H612'],
+  ['exmem-addr', 'M624,196 H660'],
+  ['exmem-store', 'M624,270 H660'],
+  ['exmem-alu', 'M624,316 H822'],
+  ['dmem-memwb', 'M780,232 H822'],
+  ['memwb-mem', 'M834,232 H880'],
+  ['memwb-alu', 'M834,316 H880'],
+  ['wb', 'M910,272 H972 V392 H226 V286 H242'],
+  ['fwd-a2', 'M640,316 V150 H446 V180'],
+  ['fwd-b2', 'M640,316 V336 H446 V284'],
+  ['fwd-a1', 'M850,316 V140 H458 V180'],
+  ['fwd-b1', 'M850,316 V348 H458 V284'],
+  ['store-byp', 'M940,272 V372 H648 V284 H660'],
+  ['branch', 'M720,74 V58 H40 V170'],
+];
+---
+<section class="lab" data-cpu-lab aria-labelledby="lab-title" tabindex="-1">
+  <div class="lab-in">
+    <header class="lab-head">
+      <div>
+        <p class="lab-kicker">Interactive · checked against the original Verilog</p>
+        <h2 id="lab-title" class="lab-title">8-bit CPU lab</h2>
+      </div>
+      <div class="lab-sub-wrap">
+        <p class="lab-sub" data-mode-panel="none">The CPU on this page runs in your browser, in two versions: the 5-stage pipeline from December 2024 and the single-cycle original from November 2024. Each is checked against its own Verilog.</p>
+        <p class="lab-sub" data-mode-panel="pipe" hidden>Step the pipelined CPU one clock at a time. Every value below is what the 2024 RTL computes in that cycle: forwarding, stalls, flushes and the original hazards included.</p>
+        <p class="lab-sub" data-mode-panel="panel" hidden>Program the single-cycle CPU the way it was first tested: one 16-bit instruction on the switches, one press of the clock button.</p>
+      </div>
+    </header>
+    <div class="mode-launch lab-js">
+      <p class="lab-try" data-mode-panel="none">Try it out? Pick a version to open it here.</p>
+      <div class="mode-row">
+        <div class="mode-tabs" role="tablist" aria-label="Lab mode">
+          <button type="button" role="tab" id="tab-pipe" data-mode-tab="pipe" aria-controls="lab-pipe" aria-selected="false">Multistage pipelined</button>
+          <button type="button" role="tab" id="tab-panel" data-mode-tab="panel" aria-controls="lab-panel" aria-selected="false" tabindex="-1">Single cycle</button>
+        </div>
+        <button type="button" class="mode-close" data-mode-close hidden>Close the lab</button>
+      </div>
+    </div>
+
+    <div class="mode-pipe" id="lab-pipe" data-mode-panel="pipe" role="tabpanel" aria-labelledby="tab-pipe">
+    <div class="lab-bar lab-js" role="toolbar" aria-label="Simulation controls">
+      <div class="seg">
+        <button type="button" data-act="reset" title="Reset">Reset</button>
+        <button type="button" data-act="back" title="Step back (←)" aria-label="Step back">◀</button>
+        <button type="button" data-act="run" class="primary" title="Run or pause (Space)">Run</button>
+        <button type="button" data-act="step" title="Step one cycle (→)" aria-label="Step one cycle">▶</button>
+        <button type="button" data-act="end" title="Run until the program finishes">End</button>
+      </div>
+      <label class="speed">Speed <input type="range" min="1" max="30" value="4" data-speed aria-label="Clock speed, cycles per second" /><output data-speed-out>4 Hz</output></label>
+      <div class="seg small" role="group" aria-label="Number format">
+        <button type="button" data-fmt="hex" aria-pressed="true">Hex</button>
+        <button type="button" data-fmt="dec" aria-pressed="false">Dec</button>
+      </div>
+      <dl class="readout">
+        <div><dt>Cycle</dt><dd data-o="cycle">0</dd></div>
+        <div><dt>Retired</dt><dd data-o="retired">0</dd></div>
+        <div><dt>CPI</dt><dd data-o="cpi">–</dd></div>
+        <div><dt>PC</dt><dd data-o="pc">00</dd></div>
+      </dl>
+      <div class="leds" aria-hidden="true">
+        <span class="led led-g" data-led="run"><i></i>Run</span>
+        <span class="led led-y" data-led="stall"><i></i>Stall</span>
+        <span class="led led-r" data-led="flush"><i></i>Flush</span>
+      </div>
+    </div>
+
+    <div class="dp-wrap">
+      <svg class="dp" viewBox="0 0 1000 420" role="img" aria-labelledby="dp-t" data-dp>
+        <title id="dp-t">Datapath of the 5-stage pipeline: fetch, decode, execute, memory and write-back, with the pipeline registers between them, forwarding paths into the ALU, the hazard unit and the branch path back to the program counter.</title>
+        <defs>
+          <marker id="dp-ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L8,4 L0,8 z" class="ah" /></marker>
+        </defs>
+        {stages.map((s) => (
+          <g class="slot" data-slot={s.id}>
+            <rect x={s.x - 82} y="12" width="164" height="32" rx="9" />
+            <text x={s.x} y="33" class="slot-t" data-slot-t={s.id}></text>
+          </g>
+        ))}
+        <g data-chips></g>
+        {wires.map(([id, d]) => <path class="w" data-w={id} d={d} marker-end="url(#dp-ah)" />)}
+        {bars.map((b) => (
+          <g class="bar" data-bar={b.id}>
+            <rect x={b.x} y="64" width="12" height="340" rx="3" />
+            <text x={b.x + 6} y="416" class="bar-t">{b.label}</text>
+          </g>
+        ))}
+        <!-- IF -->
+        <g class="blk" data-blk="pc"><rect x="30" y="170" width="60" height="56" rx="6" /><text x="60" y="191" class="blk-t">PC</text><text x="60" y="213" class="v" data-v="pc"></text></g>
+        <g class="blk" data-blk="imem"><rect x="110" y="150" width="70" height="96" rx="6" /><text x="145" y="172" class="blk-t">IMEM</text><text x="145" y="198" class="v sm" data-v="instr"></text><text x="145" y="216" class="v xs" data-v="instr-b"></text></g>
+        <text x="150" y="146" class="v xs" text-anchor="middle" data-v="pcnext"></text>
+        <!-- ID -->
+        <g class="blk" data-blk="dec"><rect x="222" y="74" width="160" height="58" rx="6" /><text x="302" y="96" class="blk-t">Decode / control</text><text x="302" y="118" class="v sm" data-v="dec"></text></g>
+        <g class="blk" data-blk="rf"><rect x="242" y="160" width="120" height="140" rx="6" /><text x="302" y="182" class="blk-t">Registers</text><text x="302" y="210" class="v sm" data-v="ra"></text><text x="302" y="236" class="v sm" data-v="rb"></text><text x="302" y="262" class="v xs" data-v="rfbyp"></text><text x="302" y="286" class="v xs" data-v="rfw"></text></g>
+        <g class="blk haz" data-blk="haz"><rect x="222" y="318" width="160" height="50" rx="6" /><text x="302" y="338" class="blk-t">Hazard unit</text><text x="302" y="358" class="v xs" data-v="haz"></text></g>
+        <!-- EX -->
+        <g class="blk mux" data-blk="mux-a"><path d="M440,180 L468,188 L468,216 L440,224 Z" /><text x="454" y="206" class="v xs">A</text></g>
+        <g class="blk mux" data-blk="mux-b"><path d="M440,240 L468,248 L468,276 L440,284 Z" /><text x="454" y="266" class="v xs">B</text></g>
+        <g class="blk alu" data-blk="alu"><path d="M500,170 L570,200 L570,264 L500,294 L500,248 L514,232 L500,216 Z" /><text x="540" y="226" class="blk-t">ALU</text><text x="540" y="246" class="v sm" data-v="alu"></text></g>
+        <text x="484" y="196" class="v xs" text-anchor="middle" data-v="alu-a"></text>
+        <text x="484" y="300" class="v xs" text-anchor="middle" data-v="alu-b"></text>
+        <text x="540" y="318" class="v xs" text-anchor="middle" data-v="aluop"></text>
+        <!-- MEM -->
+        <g class="blk" data-blk="br"><rect x="660" y="74" width="120" height="50" rx="6" /><text x="720" y="94" class="blk-t">Branch unit</text><text x="720" y="114" class="v xs" data-v="br"></text></g>
+        <g class="blk" data-blk="dmem"><rect x="660" y="170" width="120" height="120" rx="6" /><text x="720" y="192" class="blk-t">Data memory</text><text x="720" y="218" class="v sm" data-v="maddr"></text><text x="720" y="242" class="v sm" data-v="mout"></text><text x="720" y="266" class="v xs" data-v="mstore"></text></g>
+        <!-- WB -->
+        <g class="blk mux" data-blk="wbmux"><path d="M880,210 L910,222 L910,322 L880,334 Z" /><text x="895" y="276" class="v xs">WB</text></g>
+        <text x="940" y="262" class="v sm" text-anchor="middle" data-v="wb"></text>
+      </svg>
+    </div>
+    <p class="dp-swipe lab-js" aria-hidden="true">Swipe the datapath to see all five stages →</p>
+    <p class="dp-legend lab-js" aria-hidden="true">
+      <span class="lg on">value moving</span><span class="lg fwd">forwarded</span><span class="lg stall">stall</span><span class="lg flush">flush</span><span class="lg br">branch</span>
+    </p>
+    <p class="sr-only" aria-live="polite" data-live></p>
+
+    <div class="lab-grid lab-js">
+      <section class="pane pane-prog" aria-labelledby="prog-h">
+        <div class="pane-head">
+          <h3 id="prog-h">Program</h3>
+          <select data-preset aria-label="Example program">
+            {PRESETS.map((p) => <option value={p.id}>{p.title}</option>)}
+            <option value="custom">Your program</option>
+          </select>
+        </div>
+        <p class="blurb" data-blurb></p>
+        <div class="tabs" role="tablist" aria-label="Program view">
+          <button type="button" role="tab" aria-selected="true" data-tab="listing">Listing</button>
+          <button type="button" role="tab" aria-selected="false" data-tab="source">Edit source</button>
+        </div>
+        <ol class="listing" data-listing role="tabpanel" aria-label="Assembled program"></ol>
+        <div class="editor" data-editor role="tabpanel" hidden>
+          <textarea data-src spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Assembly source" rows="14"></textarea>
+          <ul class="errors" data-errors></ul>
+          <div class="ed-bar">
+            <button type="button" class="primary" data-act="assemble">Assemble and load</button>
+            <button type="button" data-act="share">Copy share link</button>
+            <span class="hint">Syntax: <code>ADD R3, R1, R2</code> · <code>LI R1, 5</code> · <code>SB R1, 10</code> · <code>LINK 0</code> · <code>JUMP 0, 255</code> · <code>BEQ 1, R1, R2</code></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="pane pane-state" aria-labelledby="state-h">
+        <h3 id="state-h" class="sr-only">Machine state</h3>
+        <div class="card-i" data-idcard>
+          <p class="pl">In decode</p>
+          <p class="idc-asm" data-idc-asm>–</p>
+          <p class="idc-bits" data-idc-bits></p>
+          <p class="idc-rtl" data-idc-rtl></p>
+        </div>
+        <div class="regs-wrap">
+          <p class="pl">Register file</p>
+          <ol class="regs" data-regs></ol>
+        </div>
+        <div class="seg7-wrap">
+          <p class="pl">Board display <span class="pl-n">(SW[2:0] selects)</span></p>
+          <div class="seg7-row">
+            <svg class="seg7" viewBox="0 0 132 64" data-seg7 role="img" aria-label="Seven-segment display"></svg>
+            <select data-segsel aria-label="Register shown on the display">
+              {[0, 1, 2, 3, 4, 5, 6, 7].map((r) => <option value={r} selected={r === 2}>R{r}</option>)}
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="pane pane-mem" aria-labelledby="mem-h">
+        <div class="pane-head"><h3 id="mem-h">Data memory</h3><p class="pl-n" data-memsel>Slots 0–7 hold jump targets</p></div>
+        <div class="mem" data-mem role="grid" aria-label="Data memory, 256 bytes"></div>
+      </section>
+
+      <section class="pane pane-tl" aria-labelledby="tl-h">
+        <div class="pane-head"><h3 id="tl-h">Pipeline diagram</h3><p class="pl-n">Click a cycle to go back to it</p></div>
+        <div class="tl-wrap"><div class="tl" data-tl></div></div>
+      </section>
+    </div>
+
+    </div>
+    <FrontPanel />
+
+    <noscript><p class="lab-nojs">The interactive lab needs JavaScript. The datapath above, the instruction set and the hazard notes below describe the same design.</p></noscript>
+  </div>
+</section>
+
+<script>
+  import { mountLab } from '../../scripts/cpu-lab';
+  const el = document.querySelector<HTMLElement>('[data-cpu-lab]');
+  if (el) mountLab(el);
+</script>

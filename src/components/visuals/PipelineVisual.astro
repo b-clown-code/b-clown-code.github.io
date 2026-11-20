@@ -1,0 +1,22 @@
+---
+// Verilog pipeline strip plus the headline pair. Numbers are the ones already on the page (claims vl-e4b-vs-stock-e4b).
+const stages = ['LLM writes testbench', 'Icarus compile + simulate', 'Pass / fail filter', 'Training set'];
+const bars = [
+  { lab: 'Fine-tuned model', n: 559, dim: false },
+  { lab: 'Stock model', n: 54, dim: true },
+];
+const total = 600;
+---
+<figure class="vis">
+  <ol class="pipe" aria-label="Pipeline stages">
+    {stages.map((s, i) => <li class={i === 1 ? 'hi' : ''}><span>{s}</span></li>)}
+  </ol>
+  <ul class="bars" aria-label="Held-out designs whose testbench ran">
+    {bars.map((b) => (
+      <li>
+        <span class="lab">{b.lab}</span><span class="val">{b.n} of {total}</span>
+        <span class="trk" aria-hidden="true"><span class={`fill${b.dim ? ' dim' : ''}`} style={`width:${(b.n / total * 100).toFixed(1)}%`}></span></span>
+      </li>
+    ))}
+  </ul>
+</figure>

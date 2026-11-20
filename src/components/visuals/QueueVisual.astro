@@ -1,0 +1,23 @@
+---
+// Illustrative gpuq queue in the real `gpuq list` column layout. Rows are examples, not live data, and say so.
+const rows = [
+  { id: 'gq-000101', gpu: 'r9700', what: 'train-small', s: 'running', c: 'run' },
+  { id: 'gq-000102', gpu: 'r9700', what: 'eval-heldout', s: 'queued', c: 'wait' },
+  { id: 'gq-000103', gpu: '4060ti', what: 'tokenizer-sweep', s: 'ok', c: 'ok' },
+  { id: 'gq-000104', gpu: '4060ti', what: 'smoke-test', s: 'FAILED (OOM)', c: 'bad' },
+  { id: 'gq-000105', gpu: 'r9700', what: 'long-run', s: 'held (review)', c: 'held' },
+];
+---
+<figure class="vis">
+  <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i><span>$ gpuq list</span></div>
+  <div class="term-wrap">
+    <table class="term">
+      <caption>Example gpuq queue view</caption>
+      <thead><tr><th scope="col">JOB</th><th scope="col">GPU</th><th scope="col" class="what">WHAT</th><th scope="col">STATUS</th></tr></thead>
+      <tbody>
+        {rows.map((r) => <tr><td>{r.id}</td><td>{r.gpu}</td><td class="what">{r.what}</td><td class={r.c}>{r.s}</td></tr>)}
+      </tbody>
+    </table>
+  </div>
+  <figcaption class="vis-cap">Example rows in the real queue layout, not live data.</figcaption>
+</figure>

@@ -1,0 +1,24 @@
+{
+ "claims": [
+  "vl-abc-selection"
+ ],
+ "form": "bar",
+ "unit": "%",
+ "order": "given",
+ "title": "Development-set success by training recipe",
+ "caption": "Each recipe changed one thing from the one before it.",
+ "rows": [
+  {
+   "label": "Full-conversation loss",
+   "value": 41.0
+  },
+  {
+   "label": "Response-only loss",
+   "value": 56.3
+  },
+  {
+   "label": "Response-only, prompts aligned to production",
+   "value": 78.0
+  }
+ ]
+}

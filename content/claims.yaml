@@ -1,0 +1,377 @@
+# Claims ledger: every number or factual claim on the site must have an entry here.
+# source: "<repo>:<path>[:line]". Repos are the owner's local checkouts; private ones are not linked from the site.
+# status: verified | verified-caveated | live-snapshot | null | failed | ongoing | owner-confirm
+# checked: date the value was re-read from the source by an agent.
+
+# ---------------------------------------------------------------- Verilog testbench pipeline
+- id: vl-dataset-rows
+  text: "11,366 training rows (10,823 train / 543 validation), 48,978,720 characters, from 3,378 modules (2,106 pilot + 1,272 aggregate; about 3,400)"
+  value: {train_rows: 10823, val_rows: 543, chars: 48978720}
+  source: "verilog_llm:datasets_combined/merged_sft/manifest.json (all_train, all_validation; lines 72-73 module counts)"
+  caveat: "Rows come from about 3.4k distinct modules (several objectives per module). Not 11k unique testbenches."
+  status: verified
+  checked: 2026-11-16
+
+- id: vl-sim-pass-definition
+  text: "A pass means the simulator exited cleanly and wrote a nonempty waveform file. It does not prove functional coverage."
+  source: "verilog_llm:results/portfolio_2026-10-12/README.md:3"
+  status: verified
+  link: "https://github.com/b-clown-code/verilog-llm/blob/21ad0d09393700fa85ba45250bfe3efb7f597f43/results/portfolio_2026-10-12/README.md"
+  checked: 2026-11-19
+
+- id: vl-e4b-vs-stock-e4b
+  text: "Fine-tuned E4B: 559/600 (93.2%) simulation passes; stock E4B: 54/600 (9.0%); same 600 designs, two passes of 300 distinct designs"
+  value: {trained: "559/600", stock: "54/600"}
+  source: "verilog_llm:results/portfolio_2026-10-12/README.md:9,14"
+  caveat: "Stock and trained use different quantization recipes (deployment comparison, not isolated training effect). Stock E4B also scored below stock E2B (best stock E2B 213-214/600), so part of the gap may be stock-model output-format failures. Archive audit 2026-11-12 rates the row UNRESOLVABLE: counts match evaluator records but historical waveform bytes are gone."
+  status: verified-caveated
+  link: "https://github.com/b-clown-code/verilog-llm/blob/21ad0d09393700fa85ba45250bfe3efb7f597f43/results/portfolio_2026-10-12/README.md"
+  checked: 2026-11-19
+
+- id: vl-e4b-passes-1-4
+  text: "Fine-tuned E4B 1113/1200 (92.8%, interval 91.1-94.1%) over four passes"
+  source: "verilog_llm:results/portfolio_2026-10-13/README.md:29"
+  status: verified-caveated
+  checked: 2026-11-16
+
+- id: vl-best-stock-small
+  text: "Best stock small-model build: E2B Q8_0 443/1200 (36.9%) over four passes; 213/600 (35.5%) over passes 1-2"
+  source: "verilog_llm:results/portfolio_2026-10-13/README.md:31; verilog_llm:results/portfolio_2026-10-12/README.md:12"
+  status: verified-caveated
+  checked: 2026-11-16
+
+- id: vl-vs-31b
+  text: "Against the stock 31B model (18.3 GB file) on the same 300 designs: fine-tuned E4B (5.2 GB) +16.3 points; fine-tuned E2B (3.4 GB) 251/300 vs 230/300, +7.0 points, interval barely excludes zero"
+  value: {e4b_gap_pts: 16.3, e2b: "251/300", stock31b: "230/300"}
+  source: "verilog_llm:results/portfolio_2026-10-13/README.md:43-48; sizes from verilog_llm:results/portfolio_2026-10-12/results.json and the 31B GGUF (18,323,733,440 bytes)"
+  caveat: "One pass of 300. 31B ran with an MTP draft model. Time comparison approximate (stock times include load/warm-up)."
+  status: verified-caveated
+  checked: 2026-11-16
+
+- id: vl-paired-31b
+  text: "Paired difference in simulation success against the stock 31B model on the same 300 designs, percentage points with 95% bootstrap intervals: fine-tuned E4B +16.3 (11.0 to 22.0); fine-tuned E2B +7.0 (0.7 to 13.3); stock 26B-A4B -1.0 (-7.3 to 5.3); stock 12B -29.7 (-37.0 to -22.3); stock E2B Q8_0 -42.7 (-50.0 to -35.3); stock E4B -67.0 (-72.7 to -61.0)"
+  value: {designs: 300, bootstrap_samples: 10000}
+  source: "verilog_llm:results/portfolio_2026-10-13/paired_comparisons.csv (rate_gain, ci95; signs flipped where 31B is the left model)"
+  caveat: "One pass of 300 designs; 10,000 bootstrap samples; quantization recipes differ between models."
+  status: verified
+  checked: 2026-11-16
+
+- id: vl-throughput
+  text: "Fine-tuned E2B decoded 163 tokens/s vs 48 for stock 31B (3.4x); 15.0 vs 4.7 requests/min (3.2x)"
+  source: "verilog_llm:results/portfolio_2026-10-13/gemma4_throughput.csv"
+  caveat: "Concurrency 1, same GPU. Resume's '6x' is not supported; use 'over 3x'."
+  status: verified
+  checked: 2026-11-16
+
+- id: vl-abc-selection
+  text: "Training-recipe iteration raised development simulation success from 41.0% (full-conversation loss) to 56.3% (response-only loss) to 78.0% (response-only loss with prompts aligned to production)"
+  value: {A: "123/300", B: "169/300", C: "234/300"}
+  source: "verilog_llm:results/training_2026-10-13/README.md (Candidate selection)"
+  caveat: "Each has its own stochastic stock run; model-selection data, not the fresh portfolio passes."
+  status: verified
+  checked: 2026-11-16
+
+- id: vl-training-config
+  text: "LoRA rank 16, 3 epochs, 1,452 optimizer steps; E2B 2 h 39 min (2h38m49s), E4B 4 h 3 min (4h02m50s) trainer time"
+  source: "verilog_llm:results/training_2026-10-13/README.md (Training method)"
+  status: verified
+  checked: 2026-11-16
+
+- id: vl-verilogeval-negative
+  text: "On VerilogEval v2 (156 functional RTL-generation tasks), later testbench-specialized fine-tunes scored below their stock bases: E4B fine-tune 40/156 vs stock E4B 78/156"
+  source: "verilog_llm:results/README.md:48-55"
+  caveat: "These are the cohort-3 fine-tunes, not the exact portfolio artifacts. Sampling settings were tuned for the 26B model. Interpretation (ours): testbench specialization did not transfer to RTL writing."
+  status: verified
+  checked: 2026-11-16
+
+- id: vl-distributed
+  text: "Coordinator/worker queue over HTTP with token auth; workers claim pipeline stages 2-4, can join mid-run, and can be drained and resumed"
+  source: "verilog_llm:docs/guides/pipeline.md:19,111-155"
+  caveat: "Owner statement 2026-11-16: home server, p16s and p14s laptops all ran as workers; fine-tuned E2B also ran on an Android phone (not as a worker)."
+  status: verified
+  checked: 2026-11-16
+
+- id: vl-audit
+  text: "Independent archive audit (2026-11-12) re-derived every headline count from evaluator records; all matched, but rated UNRESOLVABLE because historical waveform files were not kept"
+  source: "verilog_llm:results/audits/readme_repro_v2/REPORT.md:1-8,33"
+  status: verified
+  checked: 2026-11-16
+
+- id: vl-model-sizes
+  text: "Model file sizes: fine-tuned E4B 5.2 GB, fine-tuned E2B 3.4 GB, stock E4B 8.7 GB, stock E2B Q8_0 5.0 GB, stock 31B 18.3 GB"
+  source: "verilog_llm:results/portfolio_2026-10-12/results.json (artifact bytes); 31B: gemma-4-31B-it-Q4_K_M.gguf in the model archive drive, 18,323,733,440 bytes"
+  status: verified
+  checked: 2026-11-16
+
+# ---------------------------------------------------------------- gpuq
+- id: gpuq-policy
+  text: "Fast lane for jobs capped at 10 minutes or less (30-minute budget per head of queue); reboot auto-requeue capped at 3 per job chain"
+  source: "gpuq:README.md:49; gpuq:gpuq/config.py:59"
+  status: verified
+  checked: 2026-11-16
+
+- id: gpuq-jobs
+  text: "325 jobs scheduled 2026-11-10 to 2026-11-16: 234 completed, 40 failed (job exit), 32 cancelled, 4 timed out, 3 interrupted by reboot; about 98 GPU-hours of run time in finished runs"
+  source: "gpuq event log (~/.local/state/gpuq/events.jsonl) via scripts/gpuq_stats.py, cutoff 2026-11-17T00:00Z (2026-11-16 17:00 Arizona time)"
+  caveat: "Snapshot at the stated cutoff; 12 jobs were still queued or running then. Re-run scripts/gpuq_stats.py with a new cutoff before publishing. Failed = the job's own command failed, not the scheduler. Run time sums RUNNING-to-exit intervals (97.7 h)."
+  status: live-snapshot
+  checked: 2026-11-16
+
+- id: gpuq-jobs-per-day
+  text: "Jobs submitted per day (Arizona dates): Nov 10 55, Nov 11 49, Nov 12 42, Nov 13 87, Nov 14 36, Nov 15 36, Nov 16 20 (325 total, 2026-11-10 to 2026-11-16)"
+  source: "gpuq event log via scripts/gpuq_stats.py, cutoff 2026-11-17T00:00Z"
+  caveat: "2026-11-16 is a partial day (to 17:00)."
+  status: live-snapshot
+  checked: 2026-11-16
+
+- id: gpuq-size
+  text: "About 3.3k lines of Python, 88 test functions, including real systemd transient-unit integration tests"
+  source: "gpuq:gpuq/*.py, gpuq:tests/"
+  status: verified
+  checked: 2026-11-16
+
+- id: gpuq-tests-pass
+  text: "Full test suite passes: 88 passed in 71 s"
+  source: "pytest -q tests, run 2026-11-16 on the workstation"
+  status: verified
+  checked: 2026-11-16
+
+- id: gpuq-cooperative
+  text: "Approvals are cooperative, not enforced: any process running as the lab user can bypass the queue (owner decision)"
+  source: "gpuq:README.md"
+  status: verified
+  checked: 2026-11-16
+
+# ---------------------------------------------------------------- labctl
+- id: labctl-wakes
+  text: "533 agent wakes over 5.92 days (5.9) (2026-11-10 to 2026-11-15); 79 were GPU-job-completion wakes"
+  source: "labctl:docs/metrics/streamline-v1-before.md:3-19"
+  status: verified
+  checked: 2026-11-16
+
+- id: labctl-wakes-detail
+  text: "Wakes by role over the same 5.92 days: lead 358, director 116, track 59 (533 total). Most common wake triggers: GPU job finished 79; task marked done 69; task created 67; report filed with task submitted 36; task submitted 25; directive notice 25"
+  source: "labctl:docs/metrics/streamline-v1-before.json (wakes.per_role, wakes.top_trigger_sets)"
+  caveat: "Trigger sets are exact combinations; a wake with two triggers counts once, under its combination."
+  status: verified
+  checked: 2026-11-16
+
+- id: labctl-size
+  text: "About 6.5k lines of standard-library Python; 372 test functions"
+  source: "labctl:labctl/**/*.py (recursive), labctl:tests/"
+  status: verified
+  checked: 2026-11-16
+
+- id: labctl-tests-pass
+  text: "Full test suite passes: 425 passed (372 test functions plus parametrized cases) in 93 s"
+  source: "pytest -q tests, run 2026-11-16T23:13Z on the workstation"
+  status: verified
+  checked: 2026-11-16
+
+# ---------------------------------------------------------------- FPGA
+- id: fpga-sim
+  text: "Custom streaming core passed simulation against golden vectors: 16,195 checks"
+  source: "fpga-neural-lab:research/physmod-v1/REPORT.md:8"
+  status: verified
+  checked: 2026-11-16
+
+- id: fpga-capture
+  text: "On the PYNQ-Z2 board: 5 captures x 20,000 windows, 0 mismatching words, 0 sequence gaps, 0 overflows; repeat-seed capture bit-identical"
+  source: "fpga-neural-lab:research/physmod-v1/REPORT.md:9"
+  caveat: "Integrity/plumbing result only. The physics hypothesis was not tested."
+  status: verified
+  checked: 2026-11-16
+
+- id: fpga-timing
+  text: "Timing closed at 100 MHz with +1.657 ns worst negative slack (Vivado 2024.1, xc7z020); on the board the fabric clock read back as 62.5 MHz"
+  source: "fpga-neural-lab:research/physmod-v1/REPORT.md:7,29"
+  caveat: "100 MHz timing is a Vivado implementation result. The board ran the design at 62.5 MHz (FCLK0 read-back; cause not investigated), so 100 MHz operation was not exercised in hardware."
+  status: verified
+  checked: 2026-11-16
+
+- id: fpga-commissioning
+  text: "Board commissioning: raw TCP about 645/525 Mbit/s; 30-minute soak passed at 52.9-56.4 C"
+  source: "fpga-neural-lab:README.md:14-15"
+  caveat: "One run each."
+  status: verified
+  checked: 2026-11-16
+
+- id: cpu-design
+  text: "8-bit Harvard CPU, custom 16-bit ISA (14 instructions), 5-stage MIPS-style pipeline with EX/MEM and MEM/WB forwarding of ALU results, a write-back-to-decode register bypass, a load-use stall, and stall/flush on jumps and branches; assembler in C++ and Python"
+  source: "github b-clown-code/8-bit-verilog-processor@75f2f79 (README.md, Control.v:306-316 stall, Control.v:352-373 forwarding, Control.v:400-421 ALU mux, Registers.v:57, Assembler.cpp, Pyssembler.py)"
+  caveat: "Corrected 2026-11-19: the earlier wording (register-file bypass only, no EX/MEM forwarding) was wrong; forwarding was confirmed in RTL simulation (cpu-hazards)."
+  status: verified
+  link: "https://github.com/b-clown-code/8-bit-verilog-processor/blob/75f2f7971bfd358b03445c36ee76adcb8b560803/Control.v"
+  checked: 2026-11-19
+
+- id: cpu-isa
+  text: "Instruction word: funct [15:11], RT [10:8], immediate [7:0], RA [5:3], RB [2:0]. Opcodes: AND 00000, OR 00001, ADD 00010, SUB 00011, SLT 00100, NOR 00101, SETEQUAL 00110, LI 01000, SB 10000, LB 10001, LINK 10010, JUMP 10011, BEQ 10100, DISPLAY 11000. 256 x 16-bit instruction memory (address 0 is padding, programs start at 1), eight 8-bit registers R0-R7 with R0 never written, 256-byte data memory; jump targets are read from data-memory slots 0 to 7"
+  source: "github b-clown-code/8-bit-verilog-processor@75f2f79 (README.md, IF_ID.v, Control.v decode block, Instruction_Memory.v, Registers.v, dataMem.v, Pyssembler.py)"
+  status: verified
+  checked: 2026-11-19
+
+- id: cpu-hazards
+  text: "In RTL simulation: forwarding carries ALU results only, so a consumer 1 or 2 instructions after LB reads a stale value; an SB 2 instructions after the instruction that writes its register stores a stale value; when RA = RB, the register-file bypass updates RA only. A taken branch or jump costs 3 cycles, a branch not taken 1, a load-use stall 1"
+  source: "scripts/cpu-rtl/programs (load-use, store-after-write, fwd-distances) run on the vendored RTL in Icarus Verilog; content/cpu-rtl-check.json"
+  caveat: "Icarus Verilog simulation of the public RTL, not a hardware measurement. The RTL has decode latches and a multiply-driven branch signal, so synthesized behaviour may differ."
+  status: verified
+  checked: 2026-11-19
+
+- id: cpu-sim-rtl-match
+  text: "The browser simulator matches the RTL in Icarus Verilog on 330 of 330 programs (30 directed runs, 300 seeded random programs), 67,830 cycles compared (35 signal values per cycle plus final data memory) with 0 mismatches; its assembler matches Pyssembler.py on 11 of 11 programs; 8 of 8 deliberately planted model bugs were caught"
+  source: "scripts/check_cpu.mjs; content/cpu-rtl-check.json"
+  caveat: "Matches the RTL as simulated, including its hazards; it does not model the board I/O (switches, buttons, seven-segment display)."
+  status: verified
+  checked: 2026-11-19
+
+- id: cpu-boards
+  text: "Single-cycle version on a Nexys A7 (Artix-7); pipelined and ported to a Real Digital Boolean Board (Spartan-7) with a custom data bus to a display module; string-to-assembly tool"
+  source: "owner statement 2026-11-16; previous portfolio (sites.google.com/view/brandon-oldportfolio); public repo Nexys-4-DDR/A7 XDC; local Boolean Board XDC (boolean.xdc)"
+  status: verified
+  checked: 2026-11-16
+
+- id: cpu-front-panel
+  text: "Single-cycle version (Top.v, created 2024-11-13, last edited 2024-11-26) in switch mode: 16 slide switches hold one instruction, BTNC executes it, three seven-segment digits show DISPLAY output; LINK, JUMP and BEQ not implemented in switch mode. Browser model vs RTL in Icarus Verilog: 18 of 18 programs, 368 button presses, 0 mismatches, including 300 random presses; 3 of 3 planted model bugs caught. The latched instruction re-executes every internal clock (100 MHz / 32): ADD R1, R1, R1 settles at 0, ADD R1, R1, R2 is timing-dependent. 4 challenges; 10 ms debouncer replaced in simulation"
+  value: {switches: 16, programs: 18, presses: 368, random_presses: 300, mutations: 3, challenges: 4, digits: 3, divider: 32, debounce_ms: 10}
+  source: "owner zip single_cycle_8bit.zip (eight_bit_cpu_single_file: Top.v, readme.txt, Nexys-4-DDR-Master.xdc, BTN = btnc N17); scripts/check_panel_rtl.mjs -> content/cpu-panel-rtl-check.json; owner account 2026-11-19"
+  caveat: "Single-cycle source is not public. Simulation shims: debouncer -> one-clock pulse, incomplete sensitivity lists -> @(*), registers start at 0. The stored power-on program is not modelled (its JUMP path is a combinational loop)."
+  status: verified-caveated
+  checked: 2026-11-19
+
+# ---------------------------------------------------------------- Verification case studies
+- id: case-bf16
+  text: "Found a silent precision defect: the 135M trainer kept weights and optimizer state in pure BF16; about 40% of model values were bit-identical between two checkpoints, and the Adam second-moment estimate decreased in 0 of 135,031,104 entries. A pre-registered paired test then showed FP32 master weights finished 1.645 nats lower at 100M tokens, better on 5 of 5 validation streams"
+  source: "ancient-corpus:docs/RESULTS-REVIEW.md:5; ancient-corpus:research/precision-test-v1/RESULTS.md:3,16"
+  caveat: "One seed pair. Results from the old trainer (including Gate 5 curves in the public ancient-text-research repo) are treated as compromised."
+  status: verified
+  checked: 2026-11-16
+
+- id: case-bf16-streams
+  text: "Final validation loss gap, pure BF16 minus FP32 weights with BF16 autocast, by stream (nats): Egyptian 2.291 (66 sequences); Ancient Greek 1.605 (256); Latin canonical 1.502 (150); Latin 170M 1.236 (256); Syriac 1.591 (9). FP32-autocast was better on 5 of 5 streams."
+  source: "ancient-corpus:research/precision-test-v1/RESULTS.md:9-15"
+  caveat: "Validation streams overlap with training data, so only the paired gap is meaningful, not the absolute losses. One seed pair; Syriac has 9 sequences."
+  status: verified
+  checked: 2026-11-16
+
+- id: case-recall
+  text: "Corrected own retrieval benchmark: Recall@5 89.47% was measured while 4,786 dense vectors were orphaned by truncated chunk IDs; after the fix it is 14/19 = 73.68%"
+  source: "neural_network_research:ACTIONABLE_PLAN.md:9"
+  status: verified
+  checked: 2026-11-16
+
+- id: case-s2-steering
+  text: "A memory experiment passed its registered gate (32/32 episodes, shuffled control 0%), then a follow-up diagnostic showed the memory forced the same answer on unrelated questions (100% and 98.4%), so the pass was scoped down to 'steering', not memory"
+  source: "s2-memory-lab:EXPERIMENT_LEDGER.md:92,94"
+  status: verified
+  checked: 2026-11-16
+
+- id: case-incident
+  text: "Server freeze postmortem: journal timeline, then a userspace memory test reproduced 12 hardware data-corruption incidents in 33 seconds with no GPU workload; report states the root cause is not proven"
+  source: "server-incident-2026-10-15/REPORT.md (workstation home, not a repo)"
+  status: verified
+  checked: 2026-11-16
+
+- id: case-migration
+  text: "Drive-to-drive storage migration with identity checks, an approved exclusion list (12 files), and post-copy verification (verified: true, 2026-10-28)"
+  source: "storage2tb-migration-status.json; run-storage2tb-migration.py (workstation home)"
+  status: verified
+  checked: 2026-11-16
+
+# ---------------------------------------------------------------- ROCm training study
+- id: rocm-baseline
+  text: "Baseline 12,985 tokens/s for a 355.6M-parameter model on an AMD R9700, 3 runs within 0.21%"
+  source: "rdna4-training-lab:docs/R9700_TRAINING_GUIDE_v2.md:16"
+  status: verified
+  checked: 2026-11-16
+
+- id: rocm-liger
+  text: "Fused RMSNorm+RoPE+SwiGLU kernels: 1.289x speed at 0.867x memory; adding FFN checkpointing: 1.179x speed at 0.669x memory; both passed 100-step loss parity, gradient agreement (cosine >= 0.99997) and bitwise-resume checks; one seed, runs up to 300 steps"
+  source: "rdna4-training-lab:docs/R9700_TRAINING_GUIDE_v2.md:24-25"
+  caveat: "One seed, runs up to 300 steps (guide line 7)."
+  status: verified
+  checked: 2026-11-16
+
+- id: rocm-rejected
+  text: "Rejected: TunableOp 1.044x (below the adoption bar); BLAS backend choice had no effect"
+  source: "rdna4-training-lab:docs/R9700_TRAINING_GUIDE_v2.md:37,50"
+  status: verified
+  checked: 2026-11-16
+
+# ---------------------------------------------------------------- Ancient-language corpus
+- id: corpus-v9
+  text: "V9 corpus release: 745.2M training and 24.0M validation tokens, split by text family, validated 27/27 acceptance checks, hash-pinned manifest"
+  source: "ancient-corpus:PROJECT-STATUS.md:7; ancient-corpus:catalog/releases/historical-snapshots-v9/MANIFEST.json (publication)"
+  status: verified
+  checked: 2026-11-16
+
+- id: corpus-v9-languages
+  text: "V9 training tokens by language: Latin 632855102; Ancient Greek 70061790; Sanskrit 30957993; Syriac 6231483; Akkadian 2198070; Egyptian 1194570; Sumerian 601617; Arabic 563677; Coptic 346220; Tibetan 101316; K'iche' 53560; Tamil 46970 (sum 745212368; Latin about 85%)"
+  source: "ancient-corpus:catalog/releases/historical-snapshots-v9/receipts/RESULTS.json (languages.*.b2_bpe_and_eos[0])"
+  caveat: "Language names are from the ISO 639-3 codes in the release. Pali has no V9 training tokens."
+  status: verified
+  checked: 2026-11-16
+
+- id: corpus-360m-run
+  text: "355.6M-parameter model trained to 360M tokens on V9; diagnostic 2.180 bits per character on a 1% sample"
+  source: "ancient-corpus:research/latin-curated-preparation-v2/T3-COMPLETION-VERIFICATION.md:9"
+  caveat: "Diagnostic only; full evaluation not run. Do not present as a model result."
+  status: verified-caveated
+  checked: 2026-11-16
+
+- id: corpus-retrieval
+  text: "Retrieval pilot: hybrid lexical+dense fusion Recall@10 0.4567 (0.457) vs 0.3065 (0.307) lexical, 0.3330 (0.333) dense, on a 35,000-passage index; recall measured on the 120 answerable queries of 150"
+  source: "github b-clown-code/ancient-text-research:RESULTS.md"
+  caveat: "Relevance labels were constructed from system agreement, not independently judged."
+  status: verified-caveated
+  link: "https://github.com/b-clown-code/ancient-text-research/blob/3d021afd2a60ae3e4a5a1dc610315c8e63a5e12d/RESULTS.md"
+  checked: 2026-11-19
+
+# ---------------------------------------------------------------- Research notebook
+- id: nb-llm3001
+  text: "Latent-message interface between two models: 0.95-0.98 accuracy on 3 seeds with controls at or below 0.05; but a plain-text baseline scored 1.000, so the latent channel lost"
+  source: "neural_network_research:tracks/llm3001/LLM3001_INDEX.md:26-28"
+  status: null
+  checked: 2026-11-16
+
+- id: nb-klm
+  text: "Low-rank factor recovery: test cross-entropy 6.26 (rank-64 SVD) to 2.75 after training, vs 2.33 for the original model (89% of the gap closed)"
+  source: "neural_network_research:KLM_WEIGHT_GENERATOR_REPORT.md:99-107"
+  caveat: "Single seed, one dataset."
+  status: verified-caveated
+  checked: 2026-11-16
+
+- id: nb-s2
+  text: "Learned memory for a frozen model: benchmark showed a generic shift, not episode-specific recall"
+  source: "s2-memory-lab:EXPERIMENT_REPORT.md:493"
+  status: null
+  checked: 2026-11-16
+
+- id: nb-doc-to-weights
+  text: "Document-to-weights hypernetwork: null at pilot scale (difference -0.019, interval -0.099 to +0.057)"
+  source: "research-synthesis:director/portfolio/EVIDENCE_AUDIT.md:37"
+  status: null
+  checked: 2026-11-16
+
+# ---------------------------------------------------------------- Lab
+- id: lab-hardware
+  text: "One workstation: AMD Radeon AI PRO R9700 (32 GB, ROCm) and NVIDIA RTX 4060 Ti (8 GB, CUDA), Ryzen 9 5900X; plus a PYNQ-Z2 (Zynq-7020) board"
+  source: "lscpu / free on the workstation 2026-11-16; fpga-neural-lab:docs/HARDWARE_INVENTORY.md"
+  status: verified
+  checked: 2026-11-16
+
+# ---------------------------------------------------------------- Research library
+- id: rl-papers
+  text: "305 papers in the research knowledge base; 292 have an arXiv id or DOI, 13 have no public identifier; 26 have no author list recorded"
+  value: {papers: 305, with_identifier: 292, without_identifier: 13, without_authors: 26}
+  source: "neural_network_research:research_kb/data/cards/*.json via scripts/export_research_library.py (counts in content/research-library.json)"
+  caveat: "Paper metadata was extracted from the PDFs with model assistance; 26 author lists were never recorded (a placeholder was dropped), and some lists are truncated to 'et al.' as recorded."
+  status: verified-caveated
+  checked: 2026-11-19
+
+- id: rl-graph
+  text: "125 problems, 141 technique families and 1,812 public graph links (of 3,407 edges in the full graph; internal node types and their edges are not exported)"
+  value: {problems: 125, techniques: 141, links: 1812, full_edges: 3407}
+  source: "neural_network_research:research_kb/data/knowledge_graph.json via scripts/export_research_library.py"
+  caveat: "Problem and technique groupings are the owner's own classification, made with model assistance; two catch-all groups exist (Other Specialized Problems, Specialized Neural / Hardware Technique)."
+  status: verified-caveated
+  checked: 2026-11-19

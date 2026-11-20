@@ -1,0 +1,158 @@
+---
+import fs from 'node:fs';
+import { parse } from 'yaml';
+import Base from '../../layouts/Base.astro';
+import lib from '../../../content/research-library.json';
+import { url } from '../../lib/site';
+
+type Paper = (typeof lib.papers)[number];
+const readYaml = <T,>(p: string, fb: T): T => {
+  try { return (parse(fs.readFileSync(new URL(p, `file://${process.cwd()}/`), 'utf8')) as T) ?? fb; } catch { return fb; }
+};
+const topicDesc = new Map(readYaml<{ id: number; description: string }[]>('content/research-topics.yaml', []).map((t) => [t.id, t.description]));
+const qa = readYaml<{ q: string; findings: { paper: number; text: string }[]; summary: string; topics: number[]; status: string }[]>('content/research-qa.yaml', []);
+
+const CAT: Record<string, string> = { ai_ml_general: 'AI and ML', neural_computer: 'Neural computing', fpga: 'FPGA and hardware' };
+const byId = new Map<number, { name: string; kind: 'problem' | 'technique' }>();
+lib.problems.forEach((p) => byId.set(p.id, { name: p.name, kind: 'problem' }));
+lib.techniques.forEach((t) => byId.set(t.id, { name: t.name, kind: 'technique' }));
+const paperById = new Map(lib.papers.map((p) => [p.id, p]));
+
+// Topic → papers, and each topic's dominant category (for graph colour).
+const topicPapers = new Map<number, number[]>();
+for (const p of lib.papers) for (const t of [p.problem, p.technique]) if (t != null) (topicPapers.get(t) ?? topicPapers.set(t, []).get(t)!).push(p.id);
+const topics = [...topicPapers.entries()].map(([id, ps]) => {
+  const cats = new Map<string, number>();
+  ps.forEach((pid) => { const c = paperById.get(pid)!.category!; cats.set(c, (cats.get(c) ?? 0) + 1); });
+  const cat = [...cats.entries()].sort((a, b) => b[1] - a[1])[0][0];
+  return { id, name: byId.get(id)!.name, kind: byId.get(id)!.kind, cat, desc: topicDesc.get(id) ?? '', papers: ps };
+}).sort((a, b) => b.papers.length - a.papers.length);
+
+const authorLine = (a: string[]) => (!a.length ? 'Authors not recorded; see the publication' : a.length > 3 ? `${a.slice(0, 3).join(', ')}, et al.` : a.join(', '));
+const years = [...new Set(lib.papers.map((p) => p.year).filter(Boolean))].sort((a, b) => b! - a!) as number[];
+const sorted = [...lib.papers].sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || a.title.localeCompare(b.title));
+const c = lib.counts;
+
+// Compact client payload: papers and topics only (the catalog itself is server-rendered).
+const client = {
+  cats: CAT,
+  papers: lib.papers.map((p: Paper) => [p.id, p.title, authorLine(p.authors), p.year, p.category, p.url, p.problem, p.technique]),
+  topics: topics.map((t) => [t.id, t.name, t.kind === 'problem' ? 0 : 1, t.cat, t.desc, t.papers]),
+};
+---
+<Base title="Research library" description={`A catalog of the ${c.papers} papers in my research knowledge base, grouped by the problem each one addresses and the technique it uses.`}>
+  <section class="band band-rl" aria-labelledby="rl-h">
+    <div class="band-in rl-band">
+      <div class="band-copy">
+        <p class="kicker">Research library</p>
+        <h1 id="rl-h" class="band-h">{c.papers} papers, mapped by the problem each one addresses.</h1>
+        <p class="band-p">This is the reading list behind my ML and hardware work. I keep it as a knowledge graph: every paper is linked to one research problem and one technique family, and related papers are linked to each other. This page is a public export of the paper metadata and the graph. My own notes on each paper stay private.</p>
+      </div>
+      <dl class="rl-stats">
+        <div><dt>Papers</dt><dd>{c.papers}</dd></div>
+        <div><dt>Problems</dt><dd>{c.problems}</dd></div>
+        <div><dt>Technique families</dt><dd>{c.techniques}</dd></div>
+        <div><dt>Graph links</dt><dd>{c.edges.toLocaleString('en-US')}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <div class="ftabs rl-tabs" role="tablist" aria-label="Library views" data-rltabs hidden>
+    <button type="button" role="tab" id="tab-explore" aria-controls="p-explore" aria-selected="true">Explore</button>
+    <button type="button" role="tab" id="tab-catalog" aria-controls="p-catalog" aria-selected="false" tabindex="-1">Catalog</button>
+    <button type="button" role="tab" id="tab-ask" aria-controls="p-ask" aria-selected="false" tabindex="-1">Ask</button>
+  </div>
+
+  <section id="p-explore" class="rl-panel" role="tabpanel" aria-labelledby="tab-explore" data-panel="explore">
+    <h2 class="rl-ph">Explore</h2>
+    <p class="rl-note">Topics are sized by paper count. Select a topic to show its papers, then select a paper for its details. Hold and drag to move a node.</p>
+    <div class="rl-filters" role="group" aria-label="Category" data-gcats>
+      <button type="button" data-c="all" aria-pressed="true">All</button>
+      {Object.entries(CAT).map(([k, l]) => <button type="button" data-c={k} aria-pressed="false"><i class={`sw c-${k}`} aria-hidden="true"></i>{l}</button>)}
+    </div>
+    <div class="rl-explore">
+      <div class="rl-graph" data-graph>
+        <canvas aria-hidden="true"></canvas>
+        <p class="rl-hint" data-hint>Loading the graph…</p>
+      </div>
+      <aside class="rl-sheet" aria-live="polite" data-sheet>
+        <p class="rl-sheet-empty">Select a topic or a paper.</p>
+      </aside>
+    </div>
+    <h3 class="rl-l rl-toph">Most-connected topics</h3>
+    <ol class="rl-toplist" data-toplist>
+      {topics.slice(0, 40).map((t) => (
+        <li><button type="button" data-topic={t.id}><span class="rl-k">{t.kind}</span> {t.name} <span class="rl-n">{t.papers.length}</span></button></li>
+      ))}
+    </ol>
+  </section>
+
+  <section id="p-catalog" class="rl-panel" role="tabpanel" aria-labelledby="tab-catalog" data-panel="catalog">
+    <h2 class="rl-ph">Catalog</h2>
+    <div class="rl-search" data-csearch hidden>
+      <label class="rl-sr" for="rl-q">Search the catalog</label>
+      <input id="rl-q" type="search" placeholder="Search titles, authors and topics" autocomplete="off" />
+      <div class="rl-filters" role="group" aria-label="Category">
+        <button type="button" data-c="all" aria-pressed="true">All</button>
+        {Object.entries(CAT).map(([k, l]) => <button type="button" data-c={k} aria-pressed="false">{l}</button>)}
+      </div>
+      <div class="rl-filters rl-years" role="group" aria-label="Year">
+        <button type="button" data-y="all" aria-pressed="true">Any year</button>
+        {years.slice(0, 6).map((y) => <button type="button" data-y={y} aria-pressed="false">{y}</button>)}
+        <button type="button" data-y="older" aria-pressed="false">Before {years[5]}</button>
+      </div>
+      <p class="rl-count" aria-live="polite" data-ccount></p>
+    </div>
+    <ul class="rl-list" data-clist>
+      {sorted.map((p) => {
+        const pr = p.problem != null ? byId.get(p.problem)!.name : '';
+        const te = p.technique != null ? byId.get(p.technique)!.name : '';
+        return (
+          <li class="rl-item" data-id={p.id} data-c={p.category} data-y={p.year} data-s={`${p.title} ${p.authors.join(' ')} ${pr} ${te}`.toLowerCase()}>
+            <p class="rl-t">{p.url ? <a href={p.url} rel="noopener">{p.title}</a> : p.title}</p>
+            <p class="rl-a">{authorLine(p.authors)}</p>
+            <p class="rl-m"><span>{p.year}</span><span>{CAT[p.category!]}</span>{p.url ? <span>{p.url.includes('arxiv') ? 'arXiv' : 'DOI'}</span> : <span class="rl-noid">No public identifier</span>}</p>
+            <p class="rl-tp"><span class="rl-k">problem</span> {pr}<br /><span class="rl-k">technique</span> {te}</p>
+          </li>
+        );
+      })}
+    </ul>
+  </section>
+
+  <section id="p-ask" class="rl-panel" role="tabpanel" aria-labelledby="tab-ask" data-panel="ask">
+    <h2 class="rl-ph">Ask the library</h2>
+    <p class="rl-note">This is not a live model. The search box ranks papers and topics by keyword match on public metadata, in your browser. The question cards below were written ahead of time. In each card, paper findings are cited, the summary is generated text, and any links to my own experiments are marked separately.</p>
+    <div class="rl-ask" data-ask hidden>
+      <label class="rl-sr" for="rl-ask-q">Ask a question</label>
+      <input id="rl-ask-q" type="search" placeholder="For example: memory beyond the context window" autocomplete="off" />
+      <div class="rl-ask-res" aria-live="polite" data-askres></div>
+    </div>
+    <div class="rl-qa">
+      {qa.map((x) => (
+        <article class="rl-card">
+          <h3>{x.q}</h3>
+          {x.status !== 'reviewed' && <p class="rl-draft">Draft: owner review pending</p>}
+          <p class="rl-l">Paper findings</p>
+          <ul class="rl-find">
+            {x.findings.map((f) => { const p = paperById.get(f.paper); return p && (
+              <li>{f.text} <cite>{p.url ? <a href={p.url} rel="noopener">{p.title}</a> : p.title} ({p.year})</cite></li>
+            ); })}
+          </ul>
+          <p class="rl-l">Generated summary{x.status === 'reviewed' ? ' (reviewed)' : ' (not yet reviewed)'}</p>
+          <p class="rl-sum">{x.summary}</p>
+          <p class="rl-l">Our experiments</p>
+          <p class="rl-sum rl-exp">None linked yet. Measured work is on <a href={url('/verification/')}>How I verify</a> and in the <a href={url('/notebook/')}>Notebook</a>.</p>
+          {x.topics?.length > 0 && <p class="rl-m">{x.topics.map((t) => byId.get(t) && <span>{byId.get(t)!.name}</span>)}</p>}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <p class="rl-foot">Paper titles, authors, years and identifiers come from the publications themselves. The problem and technique groupings, the topic descriptions and the links between papers are my own classification, made with model assistance and checked by hand. They are not the authors' terms. Agent-built page (2026); see <a href={url('/about/')}>About</a>.</p>
+
+  <script type="application/json" id="rl-data" set:html={JSON.stringify(client)} />
+  <script>
+    import { initResearch } from '../../scripts/research-lib';
+    initResearch();
+  </script>
+</Base>

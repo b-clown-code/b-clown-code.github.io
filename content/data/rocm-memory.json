@@ -1,0 +1,21 @@
+{
+ "claims": [
+  "rocm-liger"
+ ],
+ "form": "bar",
+ "unit": "×",
+ "order": "given",
+ "baseline": 1,
+ "title": "Peak memory relative to baseline",
+ "caption": "Lower uses less memory. Baseline is 1.0.",
+ "rows": [
+  {
+   "label": "Fused kernels",
+   "value": 0.867
+  },
+  {
+   "label": "Fused kernels + FFN checkpointing",
+   "value": 0.669
+  }
+ ]
+}

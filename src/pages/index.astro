@@ -1,0 +1,56 @@
+---
+import { getEntry, getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import CpuTeaser from '../components/cpu/CpuTeaser.astro';
+import rtl from '../../content/cpu-rtl-check.json';
+import { url } from '../lib/site';
+const entry = (await getEntry('pages', 'index'))!;
+const projects = await getCollection('projects');
+const body = entry.body ?? '';
+const [head, rest = ''] = body.split(/^## Selected work\s*$/m);
+const [workPart] = rest.split(/^## /m);
+const paras = head.split(/\n\s*\n/).map((s) => s.trim()).filter((s) => s && !s.startsWith('#'));
+// edu line comes first in the source; the lead paragraph is the one after it
+const [edu, leadPara = ''] = paras;
+const cut = leadPara.search(/[.!?]\s/);
+const lead = cut < 0 ? leadPara : leadPara.slice(0, cut + 1);
+const restLead = cut < 0 ? '' : leadPara.slice(cut + 2);
+const blocks = workPart.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean);
+const rows = blocks.filter((b) => b.startsWith('**')).map((b) => {
+  const m = b.match(/^\*\*(.+?)\.\*\*\s+([^\n]*)\n\*(.+)\*\s*\n\[[^\]]*\]\(([^)]+)\)/);
+  const slug = m ? m[4].replace(/\/$/, '').split('/').pop() : '';
+  const proj = projects.find((p) => p.id === slug);
+  return m && proj ? { lead: m[1], text: m[2], caveat: m[3], href: url(m[4]), proj } : null;
+}).filter(Boolean) as { lead: string; text: string; caveat: string; href: string; proj: (typeof projects)[number] }[];
+const more = [...(blocks.find((b) => b.startsWith('[All')) ?? '').matchAll(/\[([^\]]+)\]\(([^)]+)\)/g)].map((m) => ({ label: m[1], href: url(m[2]) }));
+---
+<Base title={entry.data.title} description={entry.data.description}>
+  <div class="hero">
+    <h1 class="lead">{lead}</h1>
+    <div class="intro">
+      <p>{restLead}</p>
+      <p class="sec">{edu}</p>
+    </div>
+  </div>
+  <section class="band band-home" aria-labelledby="lab-band">
+    <div class="band-in">
+      <div class="band-copy">
+        <p class="kicker">8-bit CPU lab</p>
+        <h2 id="lab-band" class="band-h">An 8-bit CPU, one clock at a time.</h2>
+        <p class="band-p">The 5-stage pipeline I designed in 2024, running in the browser. The simulator is checked against the CPU's own Verilog, signal by signal, on every clock: {rtl.programs} of {rtl.programs} test programs match.</p>
+        <a class="band-cta" href={url('/projects/8-bit-pipelined-cpu/')}>Open the CPU lab<span aria-hidden="true"> →</span></a>
+      </div>
+      <CpuTeaser />
+    </div>
+  </section>
+  <section class="work" aria-labelledby="sw">
+    <h2 id="sw">Selected work</h2>
+    <div class="cards">
+      {rows.map((r) => (
+        <ProjectCard href={r.href} title={r.proj.data.title} status={r.proj.data.status} metric={r.proj.data.metric} text={r.text} caveat={r.caveat} visual={r.proj.data.visual} />
+      ))}
+    </div>
+    <p class="more">{more.map((l) => <a href={l.href}>{l.label}</a>)}</p>
+  </section>
+</Base>

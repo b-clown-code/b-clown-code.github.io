@@ -1,0 +1,49 @@
+{
+ "claims": [
+  "vl-paired-31b"
+ ],
+ "form": "interval",
+ "unit": "points",
+ "title": "Simulation success compared with the stock 31B model",
+ "caption": "Difference in percentage points on the same 300 designs, with 95% bootstrap intervals. Right of zero means better than the 31B model. The fine-tuned E2B interval barely excludes zero.",
+ "rows": [
+  {
+   "label": "Fine-tuned E4B",
+   "value": 16.3,
+   "low": 11.0,
+   "high": 22.0,
+   "emphasis": true
+  },
+  {
+   "label": "Fine-tuned E2B",
+   "value": 7.0,
+   "low": 0.7,
+   "high": 13.3,
+   "emphasis": true
+  },
+  {
+   "label": "Stock 26B-A4B",
+   "value": -1.0,
+   "low": -7.3,
+   "high": 5.3
+  },
+  {
+   "label": "Stock 12B",
+   "value": -29.7,
+   "low": -37.0,
+   "high": -22.3
+  },
+  {
+   "label": "Stock E2B Q8_0",
+   "value": -42.7,
+   "low": -50.0,
+   "high": -35.3
+  },
+  {
+   "label": "Stock E4B",
+   "value": -67.0,
+   "low": -72.7,
+   "high": -61.0
+  }
+ ]
+}

@@ -1,0 +1,44 @@
+---
+// Pipeline staircase for the "Load-use stall" scenario in the lab; same timing as the Verilog.
+type Cell = { c: number; s: string; stall?: boolean };
+const cycles = Array.from({ length: 10 }, (_, i) => i + 1);
+const seq = (start: number): Cell[] => ['IF', 'ID', 'EX', 'MEM', 'WB'].map((s, i) => ({ c: start + i, s }));
+const rows: { op: string; cells: Cell[] }[] = [
+  { op: 'LI R1, 42', cells: seq(1) },
+  { op: 'SB R1, 10', cells: seq(2) },
+  { op: 'LB R2, 10', cells: seq(3) },
+  { op: 'ADD R3, R2, R2', cells: [
+    { c: 4, s: 'IF' }, { c: 5, s: 'ID' }, { c: 6, s: 'ID', stall: true },
+    { c: 7, s: 'EX' }, { c: 8, s: 'MEM' }, { c: 9, s: 'WB' },
+  ] },
+  { op: 'LI R4, 7', cells: [
+    { c: 5, s: 'IF' }, { c: 6, s: 'IF', stall: true }, { c: 7, s: 'ID' },
+    { c: 8, s: 'EX' }, { c: 9, s: 'MEM' }, { c: 10, s: 'WB' },
+  ] },
+];
+const desc = (r: typeof rows[number]) =>
+  r.cells.map((x) => `cycle ${x.c} ${x.s}${x.stall ? ' (stall, held)' : ''}`).join(', ');
+---
+<figure class="vis cpu" aria-label="Pipeline diagram of a load-use stall: five instructions across ten cycles. ADD repeats decode for one cycle, and the next instruction is held in fetch.">
+  <div class="cpu-grid" aria-hidden="true">
+    <span class="cpu-h cpu-lab"></span>
+    {cycles.map((c) => <span class="cpu-h">{c}</span>)}
+    {rows.map((r) => (
+      <>
+        <span class="cpu-lab">{r.op}</span>
+        {cycles.map((c) => {
+          const x = r.cells.find((k) => k.c === c);
+          return x
+            ? <span class={`cpu-c s-${x.s.toLowerCase()}${x.stall ? ' stall' : ''}`}>{x.s}</span>
+            : <span class="cpu-e"></span>;
+        })}
+      </>
+    ))}
+  </div>
+  <table class="cpu-sr">
+    <caption>Pipeline stages by cycle. A dotted stall cell means the stage is repeated or held.</caption>
+    <thead><tr><th>Instruction</th><th>Stages</th></tr></thead>
+    <tbody>{rows.map((r) => <tr><th>{r.op}</th><td>{desc(r)}</td></tr>)}</tbody>
+  </table>
+  <figcaption class="vis-cap">Load-use stall: ADD waits one cycle in decode. Same timing as the Verilog.</figcaption>
+</figure>

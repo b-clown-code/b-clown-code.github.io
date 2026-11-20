@@ -1,0 +1,60 @@
+{
+ "claims": [
+  "corpus-v9-languages"
+ ],
+ "form": "bar",
+ "unit": "tokens",
+ "scale": "millions",
+ "title": "V9 training tokens by language",
+ "caption": "Latin is about 85% of the release. Values are printed beside each bar because the smaller languages are too short to read off the axis.",
+ "rows": [
+  {
+   "label": "Latin",
+   "value": 632855102
+  },
+  {
+   "label": "Ancient Greek",
+   "value": 70061790
+  },
+  {
+   "label": "Sanskrit",
+   "value": 30957993
+  },
+  {
+   "label": "Syriac",
+   "value": 6231483
+  },
+  {
+   "label": "Akkadian",
+   "value": 2198070
+  },
+  {
+   "label": "Egyptian",
+   "value": 1194570
+  },
+  {
+   "label": "Sumerian",
+   "value": 601617
+  },
+  {
+   "label": "Arabic",
+   "value": 563677
+  },
+  {
+   "label": "Coptic",
+   "value": 346220
+  },
+  {
+   "label": "Tibetan",
+   "value": 101316
+  },
+  {
+   "label": "K'iche'",
+   "value": 53560
+  },
+  {
+   "label": "Tamil",
+   "value": 46970
+  }
+ ]
+}

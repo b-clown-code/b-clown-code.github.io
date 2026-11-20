@@ -1,0 +1,28 @@
+{
+ "claims": [
+  "vl-e4b-vs-stock-e4b",
+  "vl-best-stock-small"
+ ],
+ "form": "bar",
+ "unit": "%",
+ "title": "Testbenches that compile and simulate, 600 held-out designs",
+ "caption": "Passes 1 and 2, 300 distinct designs each. A pass means the simulator exited cleanly and wrote a waveform, not that the testbench fully checks the design.",
+ "rows": [
+  {
+   "label": "Fine-tuned E4B",
+   "value": 93.2,
+   "note": "559 of 600",
+   "emphasis": true
+  },
+  {
+   "label": "Stock E2B Q8_0",
+   "value": 35.5,
+   "note": "213 of 600"
+  },
+  {
+   "label": "Stock E4B",
+   "value": 9.0,
+   "note": "54 of 600"
+  }
+ ]
+}

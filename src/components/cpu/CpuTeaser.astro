@@ -1,0 +1,29 @@
+---
+// Home-page teaser: the Fibonacci example running on the cycle model. The static frame is rendered at build time;
+// the script animates it in the browser, pauses off-screen, and stays still under reduced motion.
+import { simulate, frameHTML } from '../../lib/cpu/teaser';
+const run = simulate('fibonacci');
+const START = 14; // a cycle with forwarding into the ALU and a branch stall close behind
+---
+<div class="tz" data-tz data-start={START} role="img" aria-label="Animated view of the CPU's five pipeline stages running a Fibonacci program, with a pipeline diagram of the most recent cycles.">
+  <Fragment set:html={frameHTML(run, START)} />
+</div>
+<script>
+  import { simulate, frameHTML } from '../../lib/cpu/teaser';
+  const el = document.querySelector<HTMLElement>('[data-tz]');
+  if (el && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const run = simulate('fibonacci');
+    let c = Number(el.dataset.start) || 0, timer = 0, visible = false;
+    const tick = () => {
+      c = c + 1 >= run.states.length ? 0 : c + 1;
+      el.innerHTML = frameHTML(run, c);
+    };
+    const sync = () => {
+      const go = visible && !document.hidden;
+      if (go && !timer) timer = window.setInterval(tick, 650);
+      if (!go && timer) { clearInterval(timer); timer = 0; }
+    };
+    new IntersectionObserver((e) => { visible = e[0].isIntersecting; sync(); }).observe(el);
+    document.addEventListener('visibilitychange', sync);
+  }
+</script>

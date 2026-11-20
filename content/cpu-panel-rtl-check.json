@@ -1,0 +1,16 @@
+{
+  "source": "Top.v from the owner's single-cycle Vivado project (created 2024-11-13, last edited 2024-11-26; not published)",
+  "top_v_sha256": "3565354e5acf6e011964c2c2b2e3d81c6d5610ecca6609e390d521625c7a77e9",
+  "simulator": "Icarus Verilog version 14.0 (devel) (s20260301-428-ga079347a8)",
+  "shims": [
+    "debouncer -> one-clock edge pulse",
+    "incomplete sensitivity lists -> @(*) (synthesis semantics)",
+    "registers and memories start at 0 (FPGA configuration)"
+  ],
+  "programs": 18,
+  "presses_compared": 368,
+  "presses_unsettled_by_design": 1,
+  "unsettled_op_timing_dependent": true,
+  "mismatches": 0,
+  "checked": "2026-11-20"
+}

@@ -1,0 +1,27 @@
+# Numbers that are structural, not claims. Format: "<token>" (any page) or "<page-file-stem> <token>".
+# Keep this short. Anything that is a result belongs in content/claims.yaml instead.
+
+# Years and dates (graduation year, Vivado release, year of the CPU project)
+2024
+2026
+
+# "16-bit" word/format widths and "Version 2" style labels
+verification 16
+gpu-scheduler 2
+
+# "8-bit" in the CPU pointer on the FPGA page
+fpga-hardware-in-the-loop 8
+
+# Hardware model name "RTX 4060 Ti"
+gpu-scheduler 4060
+
+# Baseline is 1.00x by definition (normalisation)
+rocm-training-throughput 1
+
+# Page rounds a ledger value to fewer digits (ledger has the more precise number)
+
+# These numbers appear on pages but are not in the `text`/`value` of a listed claim
+# (some exist only in a claim's `caveat`, or not at all). Allowlisted only so the
+# build passes; each needs a ledger entry or a text fix, then delete the line here.
+rocm-speed 1  # baseline = 1.0 by definition
+rocm-memory 1  # baseline = 1.0 by definition

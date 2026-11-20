@@ -1,0 +1,30 @@
+---
+import StatusPill from './StatusPill.astro';
+import QueueVisual from './visuals/QueueVisual.astro';
+import PipelineVisual from './visuals/PipelineVisual.astro';
+import SpecimenVisual from './visuals/SpecimenVisual.astro';
+import CpuVisual from './visuals/CpuVisual.astro';
+import { metricParts, splitCaveat } from '../lib/site';
+interface Props { href: string; title: string; status: string; metric?: string; text?: string; caveat?: string; tags?: string[]; visual?: 'queue' | 'pipeline' | 'specimen' | 'cpu'; level?: 2 | 3; id?: string; area?: string }
+const { href, title, status, metric, text, caveat, tags = [], visual, level = 3, id, area } = Astro.props;
+const cut = title.lastIndexOf(' ');
+const head = cut > 0 ? title.slice(0, cut + 1) : '';
+const last = cut > 0 ? title.slice(cut + 1) : title;
+const H = `h${level}` as 'h2' | 'h3';
+---
+<article class="card" id={id} data-area={area}>
+  <div class="c-main">
+    <StatusPill status={status} />
+    <H class="t"><a href={href}>{head}<span class="nw">{last}<span class="arr" aria-hidden="true">→</span></span></a></H>
+    {text && <p class="d">{text}</p>}
+    {tags.length > 0 && <ul class="tags" aria-label="Technologies">{tags.map((t) => <li>{t}</li>)}</ul>}
+    {caveat && <p class="cv"><span class="cv-l">Caveat</span>{splitCaveat(caveat)}</p>}
+  </div>
+  <div class="c-side">
+    {visual === 'queue' && <QueueVisual />}
+    {visual === 'pipeline' && <PipelineVisual />}
+    {visual === 'specimen' && <SpecimenVisual />}
+    {visual === 'cpu' && <CpuVisual />}
+    {metric && <p class="stat">{metricParts(metric).map((p) => p.n ? <b>{p.t}</b> : p.t)}</p>}
+  </div>
+</article>

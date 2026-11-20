@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import StatusPill from '../../components/StatusPill.astro';
+import CpuLab from '../../components/cpu/CpuLab.astro';
+import { url } from '../../lib/site';
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((p) => ({ params: { slug: p.id }, props: { entry: p } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+---
+<Base title={d.title} description={d.summary}>
+  <article class="prose">
+    <p class="crumb"><a href={url('/projects/')}>&larr; All projects</a></p>
+    <h1>{d.title}</h1>
+    <p class="meta">
+      <StatusPill status={d.status} />
+      {d.repo && <a class="arrow-link" href={d.repo}>Source repository</a>}
+    </p>
+    <ul class="tags" aria-label="Technologies">{d.tags.map((t) => <li>{t}</li>)}</ul>
+    {d.lab === 'cpu' && <CpuLab />}
+    <Content />
+  </article>
+</Base>

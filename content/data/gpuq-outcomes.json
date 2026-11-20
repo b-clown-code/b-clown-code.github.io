@@ -1,0 +1,36 @@
+{
+ "claims": [
+  "gpuq-jobs"
+ ],
+ "form": "bar",
+ "unit": "jobs",
+ "title": "How the 325 jobs ended",
+ "caption": "Final state of every job submitted 2026-11-10 to 2026-11-16. Failed means the job's own command exited with an error.",
+ "rows": [
+  {
+   "label": "Completed",
+   "value": 234,
+   "tone": "moss"
+  },
+  {
+   "label": "Failed (job's command)",
+   "value": 40,
+   "tone": "clay"
+  },
+  {
+   "label": "Cancelled",
+   "value": 32,
+   "tone": "gray"
+  },
+  {
+   "label": "Timed out",
+   "value": 4,
+   "tone": "gold"
+  },
+  {
+   "label": "Interrupted by reboot",
+   "value": 3,
+   "tone": "plum"
+  }
+ ]
+}

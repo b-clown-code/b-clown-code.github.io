@@ -1,0 +1,37 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { url } from '../../lib/site';
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+---
+<Base title="Projects" description="Selected projects, each with its status and caveats.">
+  <h1 class="ph">Projects</h1>
+  <div class="ftabs" role="group" aria-label="Filter projects" data-ftabs hidden>
+    {[['all', 'All'], ['hardware', 'Hardware'], ['ml', 'Machine learning'], ['infrastructure', 'Infrastructure']].map(([k, l]) => (
+      <button type="button" data-f={k} aria-pressed={k === 'all' ? 'true' : 'false'}>{l}</button>
+    ))}
+  </div>
+  <div class="cards" data-fcards>
+    {projects.map((p) => (
+      <ProjectCard level={2} id={p.id} href={url(`/projects/${p.id}/`)} title={p.data.title} status={p.data.status} metric={p.data.metric} text={p.data.summary} tags={p.data.tags} visual={p.data.visual} area={p.data.area} />
+    ))}
+  </div>
+  <script>
+    const tabs = document.querySelector<HTMLElement>('[data-ftabs]');
+    const cards = [...document.querySelectorAll<HTMLElement>('[data-fcards] > .card')];
+    if (tabs) {
+      tabs.hidden = false;
+      const apply = (f: string) => {
+        tabs.querySelectorAll<HTMLButtonElement>('[data-f]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.f === f)));
+        cards.forEach((c) => { c.hidden = f !== 'all' && c.dataset.area !== f; });
+      };
+      tabs.addEventListener('click', (e) => {
+        const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-f]');
+        if (b) { apply(b.dataset.f!); history.replaceState(null, '', b.dataset.f === 'all' ? location.pathname : `#${b.dataset.f}`); }
+      });
+      const h = location.hash.slice(1);
+      if (['hardware', 'ml', 'infrastructure'].includes(h)) apply(h);
+    }
+  </script>
+</Base>

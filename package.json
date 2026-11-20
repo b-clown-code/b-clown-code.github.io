@@ -1,0 +1,24 @@
+{
+  "name": "portfolio-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check:claims": "python3 scripts/check_claims.py",
+    "check:scrub": "python3 scripts/check_scrub.py",
+    "check:links": "python3 scripts/check_links.py",
+    "check": "npm run check:claims && npm run check:scrub && npm run check:links && npm run check:panel",
+    "check:cpu": "node scripts/check_cpu.mjs",
+    "check:panel": "node scripts/check_panel.mjs",
+    "check:panel-rtl": "node scripts/check_panel_rtl.mjs"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "7.3.9",
+    "astro": "7.4.12",
+    "hast-util-from-html": "2.0.3",
+    "yaml": "2.9.1"
+  }
+}

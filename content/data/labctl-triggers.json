@@ -1,0 +1,35 @@
+{
+ "claims": [
+  "labctl-wakes-detail"
+ ],
+ "form": "bar",
+ "unit": "wakes",
+ "title": "What woke the agents",
+ "caption": "The six most common trigger combinations; each wake counts once.",
+ "rows": [
+  {
+   "label": "GPU job finished",
+   "value": 79
+  },
+  {
+   "label": "Task marked done",
+   "value": 69
+  },
+  {
+   "label": "Task created",
+   "value": 67
+  },
+  {
+   "label": "Report filed + task submitted",
+   "value": 36
+  },
+  {
+   "label": "Task submitted",
+   "value": 25
+  },
+  {
+   "label": "Directive notice",
+   "value": 25
+  }
+ ]
+}

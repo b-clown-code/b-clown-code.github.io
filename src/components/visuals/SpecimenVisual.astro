@@ -1,0 +1,19 @@
+---
+// Script specimen: one sample per language, outlines pre-rendered by scripts/gen_glyphs.py, token counts from the chart data.
+import g from './glyphs.json';
+import langs from '../../../content/data/corpus-languages.json';
+const short = (v: number) => (v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : Math.round(v / 1e3) + 'K');
+const byName = Object.fromEntries(langs.rows.map((r: { label: string; value: number }) => [r.label, r.value]));
+const items = g.glyphs.map((x, i) => ({ ...x, tokens: short(byName[x.name]), c: i }));
+---
+<figure class="vis">
+  <ul class="spec" aria-label="Languages in the V9 release, with training tokens">
+    {items.map((x) => (
+      <li class={`c${x.c}`}>
+        <svg viewBox={`0 0 ${g.w} ${g.h}`} aria-hidden="true" focusable="false"><path d={x.d} /></svg>
+        <span class="nm">{x.name}</span><b>{x.tokens}</b>
+      </li>
+    ))}
+  </ul>
+  <figcaption class="vis-cap">Training tokens per language, V9 release (largest seven shown).</figcaption>
+</figure>

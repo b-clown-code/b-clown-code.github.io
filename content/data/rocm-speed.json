@@ -1,0 +1,26 @@
+{
+ "claims": [
+  "rocm-liger",
+  "rocm-rejected"
+ ],
+ "form": "bar",
+ "unit": "×",
+ "order": "given",
+ "baseline": 1,
+ "title": "Training speed relative to baseline",
+ "caption": "Higher is faster. Baseline is 1.0.",
+ "rows": [
+  {
+   "label": "Fused kernels",
+   "value": 1.289
+  },
+  {
+   "label": "Fused kernels + FFN checkpointing",
+   "value": 1.179
+  },
+  {
+   "label": "TunableOp GEMM tuning (rejected)",
+   "value": 1.044
+  }
+ ]
+}

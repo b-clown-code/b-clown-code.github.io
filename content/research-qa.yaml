@@ -1,0 +1,66 @@
+# Q&A cards: "Paper findings" are cited; "summary" is generated and must be owner-reviewed before release. status: draft until reviewed.
+- q: "Which papers in the library deal with running transformers on FPGAs?"
+  findings:
+    - paper: 89
+      text: "FINN-T extends the FINN compiler to generate streaming dataflow hardware for quantized scaled dot-product attention, aiming at end-to-end deployment of small transformers on constrained FPGAs."
+    - paper: 22
+      text: "This vision transformer accelerator avoids floating-point units by approximating LayerNorm, Softmax, and GELU with integer arithmetic and runs projections on a group-vector systolic array."
+    - paper: 80
+      text: "EQViTA combines INT4 weight quantization, an exponential approximation for softmax, and a time-multiplexed engine to fit vision transformers on small FPGAs, trading peak throughput for area."
+    - paper: 9
+      text: "This survey compares quantization, pruning, distillation, and hardware approximations of nonlinear operations across FPGA and ASIC LLM accelerators."
+  summary: "The FPGA papers split between compiler flows that generate dataflow hardware and hand-designed accelerators for vision transformers. Several replace nonlinear operations with integer approximations and use low-bit weights to fit limited fabric. Most of the designs target vision transformers, so autoregressive language model coverage is thinner."
+  topics: [345, 537, 417, 501]
+  status: draft
+- q: "What approaches does the library collect for memory beyond the context window?"
+  findings:
+    - paper: 137
+      text: "This paper shows that linear attention is equivalent to a fast weight programmer and notes that purely additive updates can saturate memory capacity, motivating delta-rule corrections."
+    - paper: 131
+      text: "The method trains fast weights at test time by distilling from a long-window teacher into a short-window student, intended to retain information useful for future predictions."
+    - paper: 247
+      text: "Large-chunk test-time training updates fast weights over much larger token blocks to improve hardware utilization, and extends the approach beyond one-dimensional sequences."
+    - paper: 48
+      text: "Cartridges compress a document corpus into a small trained key-value cache for a frozen model, using offline self-generated conversations and context distillation."
+  summary: "The collected approaches store context in compact state instead of keeping every token in the cache. Some update fast weights during inference, while others train a compact cache offline. These methods add costs, such as test-time gradients or per-corpus training, so the choice depends on latency and update frequency."
+  topics: [420, 554, 367]
+  status: draft
+- q: "How do the low-precision training papers differ?"
+  findings:
+    - paper: 158
+      text: "Mixed Precision Training stores values in FP16 and uses FP32 master weights, loss scaling, and FP32 accumulation, in order to match FP32 results without changing hyperparameters."
+    - paper: 203
+      text: "This paper examines training with 16-bit units only, reporting that nearest rounding cancels small weight updates and that stochastic rounding or Kahan summation can mitigate this."
+    - paper: 52
+      text: "For reinforcement learning post-training at small learning rates, the authors attribute slower BF16 convergence to weights that do not change after small updates and test stochastic rounding as a remedy."
+    - paper: 295
+      text: "This theoretical paper derives scaling laws for SGD with stochastic rounding in a simplified two-layer linear model, so its conclusions are not direct evidence about large transformers."
+  summary: "The papers differ in how much of the training state remains in 32-bit and in which rounding rule they use. Earlier work keeps FP32 master weights, while later work asks whether pure 16-bit training is viable using stochastic rounding. The newest entries apply the same issue to reinforcement learning post-training or analyze it theoretically."
+  topics: [375, 501]
+  status: draft
+- q: "Which papers turn a document or task description directly into model weights?"
+  findings:
+    - paper: 249
+      text: "Text-to-LoRA trains a hypernetwork that produces LoRA adapters from natural language task descriptions in a single forward pass, without per-task fine-tuning."
+    - paper: 72
+      text: "Doc-to-LoRA uses a hypernetwork to approximate context distillation, mapping a document to adapter weights in one pass instead of running test-time backpropagation."
+    - paper: 225
+      text: "SHINE shares parameters between the hypernetwork and the frozen target model to map in-context material to LoRA adapters in one pass."
+    - paper: 109
+      text: "Internalizer addresses scaling this idea to very large base models by training a shared trunk on small models and attaching thin per-model entry and exit heads."
+  summary: "These papers replace per-prompt gradient training with a learned generator that outputs adapter weights. They differ mainly in the input, either a task description or a full document, and in how the generator scales to larger target models. The library notes a risk when supplied context conflicts with the base model's prior knowledge."
+  topics: [483, 358]
+  status: draft
+- q: "How does the library treat scaling compute at inference time for reasoning?"
+  findings:
+    - paper: 219
+      text: "This paper studies allocating a fixed inference budget by prompt difficulty, using verifier search and adaptive proposal refinement, and compares that to scaling model size."
+    - paper: 210
+      text: "s1 fine-tunes on a small curated set of reasoning traces and uses budget forcing, which lengthens or ends the model's reasoning at inference time."
+    - paper: 133
+      text: "Let's Verify Step by Step compares supervising intermediate reasoning steps with supervising final answers only, in the setting of mathematical reasoning."
+    - paper: 220
+      text: "This theoretical paper argues that scaling test-time compute without a verifier is asymptotically suboptimal compared with verifier-guided search."
+  summary: "The papers cover how to allocate inference compute, how to control reasoning length, and whether verification is needed. Several results favor verifier-based methods, though they require step-level labels or verifier models. The simpler budget-forcing recipe avoids such machinery."
+  topics: [418]
+  status: draft

@@ -1,0 +1,91 @@
+# One-sentence topic descriptions. Agent-drafted.
+- id: 538
+  name: "Specialized Neural / Hardware Technique"
+  description: "A catch-all grouping for papers whose methods do not fit a narrower category, spanning optimizers, byte-level models, uncertainty estimation, and FPGA inference partitioning."
+- id: 345
+  name: "FPGA Transformer and SSM Acceleration"
+  description: "Hardware designs, compilers, and surveys for running transformer and state-space model inference on FPGAs, including multi-device partitioning and dataflow mapping."
+- id: 348
+  name: "Hardware Fuzzing and Instruction Morphing"
+  description: "Methods for probing processors and low-level hardware behavior, including CPU fuzzing, undocumented instruction discovery, and fault injection through power or clock management."
+- id: 415
+  name: "Synthetic Pretraining and Data Efficiency"
+  description: "Approaches to training language models with limited data, including rewriting text, data mixture selection, small-model training recipes, and small-corpus benchmarks."
+- id: 481
+  name: "Hardware Vulnerability & Fuzzing Probing"
+  description: "Work on finding and characterizing hardware weaknesses, such as CPU fuzzing, voltage and clock manipulation, and instruction-level discovery."
+- id: 366
+  name: "Learned Optimizers and Meta Learning"
+  description: "Optimizers that are learned or meta-trained, alongside memory-efficient and scalable optimizers for large model training, and evaluations of whether learned optimizers justify their cost."
+- id: 417
+  name: "Ternary and Binary LLM Acceleration"
+  description: "Accelerator designs that use low-bit, ternary, or mixed-precision weights for language and vision transformer inference, with attention to FPGA resource limits."
+- id: 420
+  name: "Test Time Fast Weights and Recurrent Memory"
+  description: "Mechanisms that store information in parameters or state during inference, including fast weight programmers, test-time training, n-gram memory, and distilled context representations."
+- id: 532
+  name: "Selective State-Space Recurrence"
+  description: "Sequence models built on selective state-space recurrence, including Mamba and its successors, surveys, distillation from attention models, and FPGA implementations."
+- id: 337
+  name: "Engram and Replay Memory Consolidation"
+  description: "Neuroscience studies of how memory traces, called engrams, are encoded, consolidated, and replayed, including cellular, synaptic, and systems-level accounts."
+- id: 437
+  name: "Biological Engram & Replay Mechanisms"
+  description: "Biological evidence on engram cells and synapses, covering encoding, retrieval, persistence, and replay during sleep, with some computational models of consolidation."
+- id: 368
+  name: "Linear State Space and Recurrent Models"
+  description: "Linear-time recurrent and state-space architectures as alternatives to attention, including surveys, language-modeling studies, stability analysis, and hardware co-design."
+- id: 483
+  name: "Hypernetwork Weight Synthesis"
+  description: "Hypernetworks that generate neural network parameters or adapters directly, for example from documents, task descriptions, or model graphs, instead of running gradient-based training."
+- id: 323
+  name: "Complementary Learning Systems and Consolidation"
+  description: "Theory and evidence on how fast hippocampal and slower neocortical memory systems divide work, including engram synapses, remote memory, and implications for artificial agents."
+- id: 381
+  name: "Model Stitching and Latent Alignment"
+  description: "Techniques for connecting independently trained models through learned mappings, used to compare representations, join modalities, and let language model agents exchange latent states."
+- id: 537
+  name: "Spatial Dataflow FPGA Architecture"
+  description: "FPGA designs that map neural network layers onto spatially arranged, streaming compute units, including systolic arrays, layer-parallel training, and multi-FPGA inference."
+- id: 375
+  name: "Low Precision Training Numerics"
+  description: "Number formats and rounding methods for training with reduced precision, including FP16 and BF16 recipes, stochastic rounding, and scaling analyses."
+- id: 390
+  name: "Other Specialized Problems"
+  description: "A catch-all grouping for papers outside the main problem areas, including training kernels, activation recomputation, depth up-scaling, parameter generation, and research-idea evaluation."
+- id: 418
+  name: "Test Time Compute and Reasoning Scaling"
+  description: "Methods and analyses for spending additional inference-time compute on reasoning, including verifier-guided search, best-of-N sampling, budget control, and surveys of the area."
+- id: 492
+  name: "Learned Gradient Optimizers"
+  description: "Optimizers that transform gradients using learned or structured update rules, including VeLO, Muon, SOAP, and meta-learned proximal operators."
+- id: 501
+  name: "Mixed-Precision Quantization & Integer Accelerators"
+  description: "Quantization schemes that assign different bit widths within a model, and the integer-arithmetic accelerators and training methods that exploit them."
+- id: 551
+  name: "Synthetic Pretraining & Data Curriculum"
+  description: "Pretraining data strategies such as rephrasing, synthetic continued pretraining, mixture regression, multilingual sampling, and handling repeated data under a fixed token budget."
+- id: 358
+  name: "Instant Context Internalization"
+  description: "Methods that convert a document or task description into model parameters in one pass, plus serving systems for large numbers of LoRA adapters."
+- id: 377
+  name: "Mixture of Experts and Multi Token Prediction"
+  description: "Sparse expert architectures and related training techniques, including routing, large-scale MoE reports, and quantization of expert models."
+- id: 427
+  name: "Weight Space Representation and Editing"
+  description: "Treating network weights as data, including permutation-aware model merging, weight-space networks, and language models that read or interpret weights and weight differences."
+- id: 445
+  name: "Complementary Learning Systems & Synaptic Dynamics"
+  description: "Studies linking complementary learning systems theory to synaptic and cellular dynamics, including astrocyte contributions, systems consolidation, and working memory reactivation."
+- id: 459
+  name: "DeepSeek MoE & Latent Attention"
+  description: "Reports and studies on large mixture-of-experts language models such as DeepSeek-V3, along with expert-model quantization benchmarks and efficient attention variants."
+- id: 554
+  name: "Test-Time Fast-Weight Memory"
+  description: "Approaches that update fast weights during inference as working memory, including test-time training variants, context distillation, and links to linear attention."
+- id: 367
+  name: "Linear Attention and Hybrid Subquadratic Models"
+  description: "Architectures that replace or mix full attention with linear-cost layers, and methods for distilling quadratic attention models into subquadratic ones."
+- id: 385
+  name: "Multimodal and Embodied World Models"
+  description: "Work on world models for agents and multimodal systems, including learned environment dynamics for planning, web navigation, and robotics-oriented foundation model reviews."

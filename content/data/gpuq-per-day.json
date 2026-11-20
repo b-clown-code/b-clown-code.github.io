@@ -1,0 +1,40 @@
+{
+ "claims": [
+  "gpuq-jobs-per-day"
+ ],
+ "form": "column",
+ "unit": "jobs",
+ "title": "Jobs submitted per day",
+ "caption": "Arizona dates. 2026-11-16 is a partial day.",
+ "rows": [
+  {
+   "label": "Nov 10",
+   "value": 55
+  },
+  {
+   "label": "Nov 11",
+   "value": 49
+  },
+  {
+   "label": "Nov 12",
+   "value": 42
+  },
+  {
+   "label": "Nov 13",
+   "value": 87
+  },
+  {
+   "label": "Nov 14",
+   "value": 36
+  },
+  {
+   "label": "Nov 15",
+   "value": 36
+  },
+  {
+   "label": "Nov 16",
+   "value": 20,
+   "note": "partial day"
+  }
+ ]
+}

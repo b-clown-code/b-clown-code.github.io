@@ -1,0 +1,283 @@
+{
+ "rtl": "b-clown-code/8-bit-verilog-processor@75f2f7971bfd358b03445c36ee76adcb8b560803",
+ "simulator": "Icarus Verilog 14.0 (devel) (s20260301-428-ga079347a8)",
+ "seed": 20261119,
+ "programs": 330,
+ "directed": 30,
+ "fuzz": 300,
+ "cycles_compared": 67830,
+ "mismatches": 0,
+ "assembler_parity_programs": 11,
+ "directed_final_state": {
+  "countdown-beq": {
+   "cycles": 201,
+   "retired": 173,
+   "regs": [
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    99,
+    9
+   ],
+   "mem": {
+    "0": 5,
+    "1": 9,
+    "3": 99
+   }
+  },
+  "fibonacci": {
+   "cycles": 201,
+   "retired": 148,
+   "regs": [
+    0,
+    55,
+    89,
+    89,
+    0,
+    1,
+    0,
+    14
+   ],
+   "mem": {
+    "0": 7,
+    "1": 14,
+    "16": 89
+   }
+  },
+  "fwd-distances": {
+   "cycles": 201,
+   "retired": 197,
+   "regs": [
+    0,
+    48,
+    34,
+    5,
+    10,
+    9,
+    9,
+    252
+   ],
+   "mem": {
+    "10": 24,
+    "11": 14
+   }
+  },
+  "jump-limit": {
+   "cycles": 201,
+   "retired": 183,
+   "regs": [
+    0,
+    4,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "mem": {
+    "0": 2,
+    "2": 6,
+    "5": 4,
+    "6": 1
+   }
+  },
+  "load-use": {
+   "cycles": 201,
+   "retired": 196,
+   "regs": [
+    0,
+    42,
+    42,
+    0,
+    42,
+    0,
+    42,
+    42
+   ],
+   "mem": {
+    "10": 42,
+    "22": 42
+   }
+  },
+  "misc-ops": {
+   "cycles": 201,
+   "retired": 195,
+   "regs": [
+    0,
+    200,
+    100,
+    19,
+    1,
+    0,
+    0,
+    50
+   ],
+   "mem": {
+    "2": 50
+   }
+  },
+  "repo-program": {
+   "cycles": 201,
+   "retired": 175,
+   "regs": [
+    0,
+    253,
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "mem": {
+    "4": 5
+   }
+  },
+  "store-after-write": {
+   "cycles": 201,
+   "retired": 196,
+   "regs": [
+    0,
+    9,
+    11,
+    13,
+    20,
+    0,
+    0,
+    0
+   ],
+   "mem": {
+    "20": 9,
+    "22": 13,
+    "23": 20
+   }
+  },
+  "preset-fibonacci": {
+   "cycles": 201,
+   "retired": 148,
+   "regs": [
+    0,
+    55,
+    89,
+    89,
+    0,
+    1,
+    0,
+    14
+   ],
+   "mem": {
+    "0": 7,
+    "1": 14,
+    "16": 89
+   }
+  },
+  "preset-forwarding": {
+   "cycles": 201,
+   "retired": 197,
+   "regs": [
+    0,
+    5,
+    3,
+    8,
+    13,
+    5,
+    0,
+    0
+   ],
+   "mem": {
+    "10": 5
+   }
+  },
+  "preset-load-use": {
+   "cycles": 201,
+   "retired": 196,
+   "regs": [
+    0,
+    42,
+    42,
+    0,
+    42,
+    84,
+    0,
+    0
+   ],
+   "mem": {
+    "10": 42
+   }
+  },
+  "preset-branch-flush": {
+   "cycles": 201,
+   "retired": 192,
+   "regs": [
+    0,
+    4,
+    4,
+    1,
+    0,
+    0,
+    7,
+    10
+   ],
+   "mem": {
+    "1": 10
+   }
+  },
+  "preset-jump-limit": {
+   "cycles": 201,
+   "retired": 184,
+   "regs": [
+    0,
+    4,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "mem": {
+    "0": 2,
+    "10": 4
+   }
+  },
+  "preset-store-hazard": {
+   "cycles": 201,
+   "retired": 197,
+   "regs": [
+    0,
+    9,
+    11,
+    13,
+    0,
+    0,
+    0,
+    0
+   ],
+   "mem": {
+    "20": 9,
+    "22": 13
+   }
+  },
+  "preset-repo-program": {
+   "cycles": 201,
+   "retired": 175,
+   "regs": [
+    0,
+    253,
+    1,
+    0,
+    0,
+    1,
+    0,
+    0
+   ],
+   "mem": {
+    "4": 5
+   }
+  }
+ }
+}

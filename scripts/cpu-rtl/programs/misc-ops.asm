@@ -1,0 +1,19 @@
+; Every ALU op, R0 as a target, SETEQUAL/SLT edge values, BEQ not taken.
+LI R1, 200
+LI R2, 100
+AND R3, R1, R2
+OR R4, R1, R2
+ADD R5, R1, R2
+SUB R6, R2, R1
+SLT R7, R2, R1
+NOR R3, R1, R2
+SETEQUAL R4, R1, R1
+SLT R5, R1, R2
+ADD R0, R1, R2
+ADD R6, R0, R0
+LI R7, 50
+SB R7, 2
+BEQ 2, R1, R2
+SB R6, 30
+DISPLAY R6
+LB R0, 30

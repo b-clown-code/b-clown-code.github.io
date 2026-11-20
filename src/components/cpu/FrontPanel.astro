@@ -1,0 +1,100 @@
+---
+// Front panel (switch mode) of the 8-bit CPU lab: the November 2024 single-cycle CPU, programmed one
+// 16-bit instruction at a time on the board's slide switches. Driven by src/scripts/front-panel.ts.
+import check from '../../../content/cpu-panel-rtl-check.json';
+const bits = Array.from({ length: 16 }, (_, i) => 15 - i);
+const col = (b: number) => 16 - b; // 16 evenly spaced columns, SW15 on the left
+const role = (b: number) => (b >= 14 ? 'op' : b >= 11 ? 'ALU op' : b >= 8 ? 'RT' : b >= 6 ? 'immediate' : b >= 3 ? 'RA' : 'RB');
+const field = (b: number) => (b >= 11 ? 'f' : b >= 8 ? 't' : b >= 6 ? 'i' : b >= 3 ? 'a' : 'b');
+const ops: [string, string, string][] = [
+  ['AND', '00000', 'RT ← RA & RB'], ['OR', '00001', 'RT ← RA | RB'], ['ADD', '00010', 'RT ← RA + RB'], ['SUB', '00011', 'RT ← RA − RB'],
+  ['SLT', '00100', 'RT ← RA < RB (unsigned)'], ['NOR', '00101', 'RT ← ~(RA | RB)'], ['SETEQUAL', '00110', 'RT ← RA == RB'],
+  ['LI', '01000', 'RT ← imm'], ['SB', '10000', 'M[imm] ← RT'], ['LB', '10001', 'RT ← M[imm]'], ['DISPLAY', '11000', 'display ← RT'],
+];
+---
+<div class="fp" id="lab-panel" data-mode-panel="panel" data-front-panel role="tabpanel" aria-labelledby="tab-panel" hidden>
+  <div class="fp-story">
+    <p>Before I wrote the assembler, I tested this CPU by hand. The first version was single-cycle. When its stored program finished, it switched to <b>switch mode</b>: it read the next instruction from the board's 16 slide switches and executed it when I pressed the centre button, BTNC. I set the switches, pressed the button, and set them again for the next instruction.</p>
+    <p class="fp-note">The labels are tape and marker, the way my board was labelled. This mode runs that version: the single-cycle Verilog from November 2024, before the pipeline. It is checked against that RTL in Icarus Verilog ({check.programs} of {check.programs} test programs, {check.presses_compared} button presses). As on the board, jumps and branches do nothing in switch mode. One quirk of the original: the latched instruction kept running on every internal clock until the next press, so an instruction that reads its own target, such as <code>ADD R1, R1, R2</code>, never holds still. The lab tells you when that happens.</p>
+  </div>
+
+  <div class="fp-board">
+    <div class="fp-plate" aria-hidden="true"><span class="fp-stripe"></span>8-BIT CPU · SINGLE-CYCLE · NOV 2024</div>
+    <div class="fp-top">
+      <div class="fp-disp">
+        <svg class="seg7 fp-seg7" viewBox="0 0 132 64" data-fp-seg7 role="img" aria-label="Seven-segment display showing 0"></svg>
+        <p class="pl">Display</p>
+      </div>
+      <div class="fp-decode">
+        <p class="pl">The switches read as</p>
+        <p class="fp-asm" data-fp-asm>NOP</p>
+        <p class="fp-bits" data-fp-bits aria-hidden="true"></p>
+        <p class="fp-next" data-fp-next></p>
+      </div>
+      <div class="fp-ind" aria-hidden="true">
+        <span class="fp-led on" data-fp-led="sw"><i></i>SW mode</span>
+        <span class="fp-led" data-fp-led="wr"><i></i>Reg write</span>
+        <span class="fp-led" data-fp-led="mem"><i></i>Memory</span>
+        <span class="fp-led warn" data-fp-led="unst"><i></i>Unsettled</span>
+      </div>
+    </div>
+
+    <div class="fp-bank">
+      <div class="fp-ledrow" aria-hidden="true" data-fp-ledrow>
+        {bits.map((b) => <span class="ld" data-ld={b} style={`grid-column:${col(b)}`}></span>)}
+      </div>
+      <div class="fp-sws" role="group" aria-label="Instruction switches, SW15 on the left to SW0 on the right" data-fp-sws>
+        {bits.map((b) => (
+          <button type="button" role="switch" aria-checked="false" class={`tsw g-${field(b)}`} data-sw={b} aria-label={`SW${b}, ${role(b)} bit`} style={`grid-column:${col(b)}`}>
+            <span class="sw-slot"><span class="sw-cap"></span></span>
+          </button>
+        ))}
+      </div>
+      <div class="fp-tape" aria-hidden="true">
+        {bits.map((b) => <span class="tk" style={`grid-column:${col(b)}`}></span>)}
+        <span class="tp-op">OP</span><span class="tp-alu">ALU</span><span class="tp-rt">RT</span><span class="tp-ra">RA</span><span class="tp-rb">RB</span>
+        <span class="tp-funct">FUNCT</span><span class="tp-imm">IMMED</span>
+      </div>
+    </div>
+
+    <div class="fp-keys">
+      <button type="button" class="key key-red" data-fp="clock" title="Execute the instruction on the switches">BTNC · clock</button>
+      <button type="button" class="key" data-fp="zero">Switches to 0</button>
+      <form class="fp-word" data-fp-form>
+        <label for="fp-word">Type a word</label>
+        <input id="fp-word" data-fp-word inputmode="text" autocomplete="off" spellcheck="false" placeholder="0100 0001 0010 1010" />
+        <button type="submit" class="key key-blue">Set</button>
+      </form>
+      <button type="button" class="key key-mod" data-fp="power" title="Clear registers, memory and display">Power cycle</button>
+    </div>
+    <p class="fp-err" data-fp-err aria-live="polite"></p>
+  </div>
+
+  <div class="fp-grid">
+    <section class="pane" aria-labelledby="fp-ch-h">
+      <div class="pane-head"><h3 id="fp-ch-h">Challenges</h3><p class="pl-n" data-fp-score>0 of 4 solved</p></div>
+      <ol class="fp-ch" data-fp-ch></ol>
+    </section>
+    <section class="pane" aria-labelledby="fp-st-h">
+      <h3 id="fp-st-h">Registers</h3>
+      <ol class="regs" data-fp-regs></ol>
+      <div class="pane-head"><p class="pl">Printout</p><p class="pl-n" data-fp-count>0 presses</p></div>
+      <ol class="fp-log" data-fp-log aria-live="polite"></ol>
+    </section>
+    <section class="pane" aria-labelledby="fp-op-h">
+      <h3 id="fp-op-h">Reference card</h3>
+      <p class="fp-fmt"><span class="c-f">funct 15:11</span> <span class="c-t">RT 10:8</span> <span class="c-i">imm 7:0</span>, with <span class="c-a">RA 5:3</span> and <span class="c-b">RB 2:0</span> inside the immediate.</p>
+      <table class="fp-ops">
+        <thead><tr><th>Op</th><th>funct</th><th>Effect</th></tr></thead>
+        <tbody>{ops.map(([m, f, e]) => <tr><td>{m}</td><td class="c-f">{f}</td><td>{e}</td></tr>)}</tbody>
+      </table>
+      <p class="pl-n">LINK 10010, JUMP 10011 and BEQ 10100 have no effect in switch mode.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+  import { mountPanel } from '../../scripts/front-panel';
+  const el = document.querySelector<HTMLElement>('[data-front-panel]');
+  if (el) mountPanel(el);
+</script>

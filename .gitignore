@@ -1,0 +1,16 @@
+node_modules
+dist
+.astro
+
+# private, owner-only files (never commit)
+ANCIENTGPT_RELEASE_AUDIT.md
+V10_WEBGPU_HANDOFF.md
+scripts/ancientgpt-feasibility/
+visual_example1.pdf
+apple_ii.jpg
+ibm_model_m.jpg
+fpga_board_with_switches.png
+single_cycle_8bit.zip
+actual_switch_labels.jpg
+scripts/scrub-private.txt
+RELEASE_REVIEW.md

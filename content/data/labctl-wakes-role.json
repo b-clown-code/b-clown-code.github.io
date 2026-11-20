@@ -1,0 +1,23 @@
+{
+ "claims": [
+  "labctl-wakes-detail"
+ ],
+ "form": "bar",
+ "unit": "wakes",
+ "title": "Agent wakes by role, 5.92 days",
+ "caption": "Leads run one project each; the director coordinates leads; tracks are short work units under a lead.",
+ "rows": [
+  {
+   "label": "Lead",
+   "value": 358
+  },
+  {
+   "label": "Director",
+   "value": 116
+  },
+  {
+   "label": "Track",
+   "value": 59
+  }
+ ]
+}
