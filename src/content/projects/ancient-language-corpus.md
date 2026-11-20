@@ -4,11 +4,11 @@ summary: A data pipeline that collects, catalogs and versions texts in Greek, La
 status: In progress
 order: 6
 area: ml
-metric: "745.2M training tokens, hash-pinned releases"
+metric: "91.2M tokens in frozen V10 corpus"
 tags: [Python, SQLite FTS5, PyTorch, tokenizers, data provenance]
 visual: specimen
 repo: https://github.com/b-clown-code/ancient-text-research
-claims: [corpus-v9, corpus-360m-run, corpus-retrieval, case-bf16, corpus-v9-languages]
+claims: [corpus-v10, corpus-360m-run, corpus-retrieval, case-bf16, corpus-v9-languages]
 ---
 
 ## The problem
@@ -27,15 +27,17 @@ Ancient-language text is scattered across dozens of scholarly sources, each with
 
 | Item | Value |
 |---|---|
-| Current release (V9) | 745.2M training and 24.0M validation tokens; 27 of 27 acceptance checks passed |
+| Frozen corpus (V10) | 481,670 rows, 46.2M words and 91.2M tokens |
 | Retrieval pilot | Hybrid Recall@10 0.457, vs 0.307 lexical and 0.333 dense (35,000 passages; 120 answerable queries; [RESULTS.md](https://github.com/b-clown-code/ancient-text-research/blob/3d021afd2a60ae3e4a5a1dc610315c8e63a5e12d/RESULTS.md)) |
 | Largest training run | 355.6M-parameter model trained to 360M tokens |
+
+The following chart describes the earlier V9 corpus, retained for historical context.
 
 <figure data-chart="corpus-languages"></figure>
 
 ## In progress: ancientGPT
 
-A browser chat demo of a small model trained from scratch on this corpus is in progress. The next release keeps only sources whose licences explicitly allow AI training and redistribution. The model is still training on that release. The demo will be added after the model has been evaluated and a licence for its weights has been chosen.
+A browser chat demo of a small model trained from scratch on the frozen V10 corpus is in progress. The demo will be added after the model has been evaluated and a licence for its weights has been chosen.
 
 ## Limits
 

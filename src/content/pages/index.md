@@ -1,7 +1,7 @@
 ---
 title: Brandon Treglown
 description: A personal research lab exploring machine learning, hardware, and the questions that arise along the way.
-claims: [vl-e4b-vs-stock-e4b, vl-sim-pass-definition, vl-model-sizes, gpuq-jobs, corpus-v9]
+claims: [vl-e4b-vs-stock-e4b, vl-sim-pass-definition, vl-model-sizes, gpuq-jobs, corpus-v10]
 ---
 
 # Brandon Treglown
@@ -20,7 +20,7 @@ This is my personal research lab, where I work with AI assistants to build the c
 *Caveat: single host; approvals are cooperative, not enforced.*
 [Project →](/projects/gpu-scheduler/)
 
-**A provenance-tracked corpus of ancient-language text.** A pipeline that collects, catalogs and versions texts in Greek, Latin, Sanskrit and other ancient languages into hash-pinned training releases. The current release holds 745.2M training tokens and passed 27 of 27 acceptance checks.
+**A provenance-tracked corpus of ancient-language text.** A pipeline that collects, catalogs and versions ancient-language texts into hash-pinned training releases. The frozen V10 corpus contains 91.2M tokens.
 *Caveat: no model claims; the trained models have not had a full evaluation.*
 [Project →](/projects/ancient-language-corpus/)
 

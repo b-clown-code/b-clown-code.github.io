@@ -1,7 +1,7 @@
 ---
 title: FPGA hardware-in-the-loop data path
 summary: A custom streaming core on a Zynq board, verified word for word against simulation.
-status: Complete
+status: In progress
 order: 4
 area: hardware
 metric: "5 × 20,000 windows, 0 mismatched words"

@@ -298,6 +298,11 @@
   checked: 2026-11-16
 
 # ---------------------------------------------------------------- Ancient-language corpus
+- id: corpus-v10
+  text: "Frozen V10 candidate r5: 481,670 rows, 46.2M words, 91.2M tokens (46,224,122 words and 91,189,888 tokens)."
+  source: "ancient-corpus:research/clean-data-hunt-v1/v10-freeze-r5/FREEZE.md"
+  status: verified
+
 - id: corpus-v9
   text: "V9 corpus release: 745.2M training and 24.0M validation tokens, split by text family, validated 27/27 acceptance checks, hash-pinned manifest"
   source: "ancient-corpus:PROJECT-STATUS.md:7; ancient-corpus:catalog/releases/historical-snapshots-v9/MANIFEST.json (publication)"

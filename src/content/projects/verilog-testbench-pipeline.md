@@ -1,7 +1,7 @@
 ---
 title: Simulation-checked Verilog testbench generation
 summary: A pipeline that generates Verilog testbenches with a local LLM, keeps only the ones that simulate, and fine-tunes small models on them.
-status: Complete
+status: In progress
 order: 1
 area: ml
 metric: "559 of 600 held-out designs simulate (stock model: 54 of 600)"

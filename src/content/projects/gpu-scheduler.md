@@ -1,7 +1,7 @@
 ---
 title: gpuq — a GPU job scheduler for a shared workstation
 summary: A queue that runs every GPU job on two shared cards as a resource-limited systemd unit, with approval rules, budgets and reboot recovery.
-status: In progress
+status: Complete
 order: 2
 area: infrastructure
 metric: "325 jobs in its first week"
