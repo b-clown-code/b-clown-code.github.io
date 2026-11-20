@@ -35,9 +35,9 @@ Writing a testbench for a hardware module is slow, and a language model's guess 
 
 | Model | File size | Designs passed |
 |---|---:|---:|
-| Fine-tuned E4B | 5.2 GB | 559 / 600 (93.2%) |
+| Fine-tuned E4B | 5.2 GB | 559 / 600 (93.2%, preliminary) |
 | Stock E4B | 8.7 GB | 54 / 600 (9.0%) |
-| Best stock E2B build | 5.0 GB | 213 / 600 (35.5%) |
+| Best stock E2B build on passes 1â€“2 (UD-IQ3_XXS) | 2.4 GB | 214 / 600 (35.7%) |
 
 Each model's 600 designs are two passes of 300 distinct designs.
 
@@ -46,7 +46,7 @@ Over four passes, the fine-tuned E4B scored 1,113 / 1,200 (92.8%, interval 91.1â
 **Against a much larger stock model.** On the same 300 designs, the 31B model (18.3 GB):
 
 - The fine-tuned E4B scored 16.3 points higher.
-- The fine-tuned E2B (3.4 GB) scored 7.0 points higher, 251 vs 230 of 300. Its paired interval barely excludes zero.
+- The fine-tuned E2B (IQ4_NL with imatrix build, 3.4 GB) scored 7.0 points higher, 251 vs 230 of 300. The original fine-tuned E2B build scored 233 of 300 on pass 1. Its paired interval barely excludes zero.
 - The fine-tuned E2B decoded 3.4x faster (163 vs 48 tokens/s) and completed 3.2x more requests per minute (concurrency 1, same GPU).
 
 The paired intervals are 95% bootstrap intervals from 10,000 resamples of one pass of 300 designs.
@@ -71,16 +71,16 @@ The paired intervals are 95% bootstrap intervals from 10,000 resamples of one pa
 
 - **What "pass" means.** The simulator exited cleanly and wrote a nonempty waveform. It does not show the testbench checks the design's behaviour.
 - **What the comparison isolates.** Stock and fine-tuned models were quantized differently, so this is a comparison of deployable artifacts, not a measurement of training alone. The stock E4B also scored below the stock E2B. Part of its low score may be output-format failures rather than weak Verilog.
-- **Audit.** An archive audit re-derived every headline count from the evaluator's records, and all of them matched. It still rates them "unresolvable", because the raw waveform files from those runs were not kept.
+- **Audit.** An archive audit checked every headline count against the evaluator's records, and the totals matched. It still rates them "unresolvable": the raw waveform files from those runs were not kept, and some evaluation records are missing (counted as failures, not as passes).
 - **No transfer to writing RTL.** On VerilogEval, a benchmark of 156 RTL-writing tasks, later testbench-specialized fine-tunes scored *below* their stock base models (E4B fine-tune 40/156 vs stock 78/156). The specialization did not carry over to writing RTL.
 
 ## Who did what
 
-I directed the project. I set up the hardware and the three worker machines, chose what the pipeline and the experiments had to do, decided which models to train and how to compare them, and reviewed the results. I didn't write the code myself: AI coding assistants wrote all of it, at first in sessions I drove and later as agents in my [lab orchestrator](/projects/lab-orchestrator/), which also maintained the results archive and ran the audit.
+I directed the project. I set up the hardware and the three worker machines, chose what the pipeline and the experiments had to do, decided which models to train and how to compare them, and reviewed the results. AI coding agents wrote all of the code under my direction, at first in sessions I drove and later inside my [lab orchestrator](/projects/lab-orchestrator/), which also maintained the results archive and ran the audit ([how I use AI agents](/about/#how-i-use-ai-agents)).
 
 ## Evidence
 
-The public snapshot holds one results file, at [the pinned commit](https://github.com/b-clown-code/verilog-llm/blob/21ad0d09393700fa85ba45250bfe3efb7f597f43/results/portfolio_2026-10-12/README.md). It lists the two-pass counts for the table above (559 / 600, 54 / 600, 213 / 600), the definition of a simulation pass and the quantization caveat. The coordinator and worker protocol is described in the [pipeline guide](https://github.com/b-clown-code/verilog-llm/blob/21ad0d09393700fa85ba45250bfe3efb7f597f43/docs/guides/pipeline.md). The four-pass, 31B, paired-interval and training-recipe results are not in the public snapshot.
+The public snapshot holds one results file, at [the pinned commit](https://github.com/b-clown-code/verilog-llm/blob/21ad0d09393700fa85ba45250bfe3efb7f597f43/results/portfolio_2026-10-12/README.md). It lists the two-pass counts for the table above (559 / 600, 54 / 600, 214 / 600), the definition of a simulation pass and the quantization caveat. The coordinator and worker protocol is described in the [pipeline guide](https://github.com/b-clown-code/verilog-llm/blob/21ad0d09393700fa85ba45250bfe3efb7f597f43/docs/guides/pipeline.md). The four-pass, 31B, paired-interval and training-recipe results are not in the public snapshot.
 
 ## Code
 

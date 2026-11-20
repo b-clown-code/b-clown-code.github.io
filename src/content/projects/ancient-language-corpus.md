@@ -1,14 +1,14 @@
 ---
 title: A provenance-tracked corpus of ancient-language text
-summary: A data pipeline that collects, catalogs and versions texts in Greek, Latin, Coptic, Akkadian, Sanskrit and other ancient languages into hash-pinned training releases.
+summary: A data pipeline that collects, catalogs and versions texts in Greek, Latin, Coptic, Akkadian and other ancient languages into hash-pinned training releases.
 status: In progress
-order: 6
+order: 7
 area: ml
 metric: "91.2M tokens in frozen V10 corpus"
 tags: [Python, SQLite FTS5, PyTorch, tokenizers, data provenance]
 visual: specimen
 repo: https://github.com/b-clown-code/ancient-text-research
-claims: [corpus-v10, corpus-360m-run, corpus-retrieval, case-bf16, corpus-v9-languages]
+claims: [corpus-v10, corpus-v9, corpus-360m-run, corpus-retrieval, case-bf16, corpus-v9-languages]
 ---
 
 ## The problem
@@ -29,9 +29,9 @@ Ancient-language text is scattered across dozens of scholarly sources, each with
 |---|---|
 | Frozen corpus (V10) | 481,670 rows, 46.2M words and 91.2M tokens |
 | Retrieval pilot | Hybrid Recall@10 0.457, vs 0.307 lexical and 0.333 dense (35,000 passages; 120 answerable queries; [RESULTS.md](https://github.com/b-clown-code/ancient-text-research/blob/3d021afd2a60ae3e4a5a1dc610315c8e63a5e12d/RESULTS.md)) |
-| Largest training run | 355.6M-parameter model trained to 360M tokens |
+| Largest earlier training run | 355.6M-parameter model trained to 360M tokens on V9, later continued to 750M tokens. Internal research only: V9 is not a release (see below) |
 
-The following chart describes the earlier V9 corpus, retained for historical context.
+V9 (745.2M training tokens) and every model trained on it are earlier internal research, not releases. About 85% of V9 words fail the rights gate for public release, so V10 is the clean set. Nothing was deleted. The chart below shows V9 for historical context.
 
 <figure data-chart="corpus-languages"></figure>
 
@@ -47,7 +47,7 @@ A browser chat demo of a small model trained from scratch on the frozen V10 corp
 
 ## Who did what
 
-I chose the sources and made the licensing, exclusion and release decisions, and I reviewed the results. AI agents wrote all of the code: ingestion, cataloging and training.
+I chose the sources and made the licensing, exclusion and release decisions, and I reviewed the results. AI coding agents wrote all of the code (ingestion, cataloging and training) under my direction ([how I use AI agents](/about/#how-i-use-ai-agents)).
 
 ## Code
 

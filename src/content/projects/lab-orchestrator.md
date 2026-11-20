@@ -2,12 +2,12 @@
 title: labctl — running a research lab with AI agents
 summary: A deterministic daemon that wakes short-lived AI agents from durable state, with fencing, idempotent writes, crash recovery and fault injection.
 status: Complete
-order: 3
+order: 5
 area: infrastructure
 metric: "533 agent wakes in 5.92 days"
 tags: [Python (stdlib), SQLite, systemd, event sourcing]
 repo: null
-claims: [labctl-wakes, labctl-size, labctl-tests-pass, labctl-wakes-detail]
+claims: [labctl-wakes, labctl-size, labctl-wakes-detail, labctl-guardrails]
 ---
 
 ## The problem
@@ -17,7 +17,7 @@ I run several research projects at once, with AI coding agents doing all of the 
 ## What was built
 
 <figure data-diagram="labctl-architecture">
-<figcaption>Owner, Director, one Lead per project, and their Tracks. A daemon that makes no model calls dispatches wakes from a durable event log; GPU access goes only through gpuq.</figcaption>
+<figcaption>Owner, Director, one Lead per project, and their Tracks, plus a Maintainer agent (maintainer:labctl) that maintains labctl itself. A daemon that makes no model calls dispatches wakes from a durable event log; GPU access goes only through gpuq.</figcaption>
 </figure>
 
 
@@ -36,15 +36,16 @@ I run several research projects at once, with AI coding agents doing all of the 
   - A usage budget gate.
   - Agents can't push to git, and get GPU access only through [gpuq](/projects/gpu-scheduler/).
   - A read-only web status board bound to localhost.
+  - Per-directive wake budgets (default 12; running out raises a decision for me), time-limited path grants for file access, and limited-use notify tokens that let a detached job (such as a GPU run) send a normal-priority message to one named agent.
 
 ## Results
 
 | Measure | Value |
 |---|---:|
-| Agent wakes, 2026-11-10 to 2026-11-15 (5.9 days) | 533 |
+| Agent wakes, 2026-11-10 00:00 to 2026-11-15 22:00 MST (5.9 days) | 533 |
 | GPU-job-completion wakes | 79 |
-| Code | about 6,500 lines of standard-library Python |
-| Tests | 425 passing (372 test functions, some parametrized) |
+| Code | about 7,000 lines of standard-library Python (7,049 in the `labctl` package, counted 2026-11-19) |
+| Tests | 428 test functions (counted 2026-11-19; suite not re-run for this count) |
 
 <figure data-chart="labctl-wakes-role"></figure>
 
@@ -58,7 +59,7 @@ I run several research projects at once, with AI coding agents doing all of the 
 
 ## Limits
 
-- **Young.** It has run for about a week. The "before" metrics are a baseline for a planned streamlining pass, not a record of long-term reliability.
+- **Young.** It had run for about a week when these numbers were taken. The "before" metrics are a baseline for a planned streamlining pass, not a record of long-term reliability.
 - **Same-user process model.** Agents run as the same OS user, so the guard rails are policy, not isolation. Prompt injection is a known, unmitigated risk.
 - **Not built yet.** Several designed features are not built: quotas, session resume and a randomized chaos suite.
 
@@ -70,7 +71,7 @@ I decided how the lab should run:
 - the admission limits,
 - what agents may and may not do.
 
-I approve the design changes and review the results. AI agents wrote all of the code and tests.
+I approve the design changes and review the results. AI coding agents wrote all of the code and tests under my direction ([how I use AI agents](/about/#how-i-use-ai-agents)).
 
 ## Code
 

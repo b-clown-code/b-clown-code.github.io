@@ -2,7 +2,7 @@
 title: FPGA hardware-in-the-loop data path
 summary: A custom streaming core on a Zynq board, verified word for word against simulation.
 status: In progress
-order: 4
+order: 3
 area: hardware
 metric: "5 × 20,000 windows, 0 mismatched words"
 tags: [Verilog, Vivado, Zynq-7020, PYNQ, Python]
@@ -55,11 +55,11 @@ I wanted to stream data from custom programmable-logic hardware into host softwa
 
 - **What it proves.** The plumbing is correct. The physical-computing hypothesis it was built for has not been tested yet.
 - **Single runs.** Throughput and soak figures are from one run each.
-- **Clock.** Timing was closed for 100 MHz, but the board's fabric clock read back as 62.5 MHz (cause not investigated), so the captures ran at 62.5 MHz. 100 MHz operation has not been tested on the board.
+- **Clock.** Timing was closed for 100 MHz, but the board's fabric clock read back as 62.5 MHz, so the captures ran at 62.5 MHz. The cause has since been found: the design used Vivado's default clock plan (33.333 MHz crystal) while the board has a 50 MHz reference, so the divisors meant for 100 MHz gave 62.5 MHz. A later diagnostic measured the board's clock at 99.998 MHz, but the streaming core itself has not been re-run at 100 MHz. The capture counts and parity checks do not depend on the clock.
 
 ### Who did what
 
-I set up and commissioned the board, installed the hardware wrapper, and decided what the data path had to prove before anything was built on it. AI agents in my lab wrote the Verilog core, the testbench and the host tooling, and I reviewed the evidence.
+I set up and commissioned the board, installed the hardware wrapper, and decided what the data path had to prove before anything was built on it. I reviewed the evidence. AI coding agents wrote the Verilog core, the testbench and the host tooling under my direction ([how I use AI agents](/about/#how-i-use-ai-agents)).
 
 ## 2. 8-bit pipelined CPU (2024)
 

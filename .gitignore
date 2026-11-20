@@ -2,6 +2,9 @@ node_modules
 dist
 .astro
 
+# unpublished draft content (never commit)
+drafts/
+
 # private, owner-only files (never commit)
 ANCIENTGPT_RELEASE_AUDIT.md
 V10_WEBGPU_HANDOFF.md

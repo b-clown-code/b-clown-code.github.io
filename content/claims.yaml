@@ -35,18 +35,18 @@
   checked: 2026-11-16
 
 - id: vl-best-stock-small
-  text: "Best stock small-model build: E2B Q8_0 443/1200 (36.9%) over four passes; 213/600 (35.5%) over passes 1-2"
-  source: "verilog_llm:results/portfolio_2026-10-13/README.md:31; verilog_llm:results/portfolio_2026-10-12/README.md:12"
+  text: "Best stock small-model build: E2B UD-IQ3_XXS 214/600 (35.7%) over passes 1-2 (Q8_0 213/600, 35.5%); over four passes E2B Q8_0 is highest, 443/1200 (36.9%)"
+  source: "verilog_llm:results/portfolio_2026-10-13/README.md:31; verilog_llm:README.md:19-24 (pass 1-2 table)"
   status: verified-caveated
-  checked: 2026-11-16
+  checked: 2026-11-19
 
 - id: vl-vs-31b
-  text: "Against the stock 31B model (18.3 GB file) on the same 300 designs: fine-tuned E4B (5.2 GB) +16.3 points; fine-tuned E2B (3.4 GB) 251/300 vs 230/300, +7.0 points, interval barely excludes zero"
+  text: "Against the stock 31B model (18.3 GB file) on the same 300 designs: fine-tuned E4B (5.2 GB) +16.3 points; fine-tuned E2B (IQ4_NL + imatrix build, 3.4 GB) 251/300 vs 230/300, +7.0 points, interval barely excludes zero; the original fine-tuned E2B build scored 233/300 on pass 1"
   value: {e4b_gap_pts: 16.3, e2b: "251/300", stock31b: "230/300"}
   source: "verilog_llm:results/portfolio_2026-10-13/README.md:43-48; sizes from verilog_llm:results/portfolio_2026-10-12/results.json and the 31B GGUF (18,323,733,440 bytes)"
-  caveat: "One pass of 300. 31B ran with an MTP draft model. Time comparison approximate (stock times include load/warm-up)."
+  caveat: "One pass of 300. The 251/300 build differs from the original fine-tuned E2B (233/300 on pass 1). 31B ran with an MTP draft model. Time comparison approximate (stock times include load/warm-up)."
   status: verified-caveated
-  checked: 2026-11-16
+  checked: 2026-11-19
 
 - id: vl-paired-31b
   text: "Paired difference in simulation success against the stock 31B model on the same 300 designs, percentage points with 95% bootstrap intervals: fine-tuned E4B +16.3 (11.0 to 22.0); fine-tuned E2B +7.0 (0.7 to 13.3); stock 26B-A4B -1.0 (-7.3 to 5.3); stock 12B -29.7 (-37.0 to -22.3); stock E2B Q8_0 -42.7 (-50.0 to -35.3); stock E4B -67.0 (-72.7 to -61.0)"
@@ -92,16 +92,16 @@
   checked: 2026-11-16
 
 - id: vl-audit
-  text: "Independent archive audit (2026-11-12) re-derived every headline count from evaluator records; all matched, but rated UNRESOLVABLE because historical waveform files were not kept"
+  text: "Independent archive audit (2026-11-12): evaluator-attested totals match every headline count; rated UNRESOLVABLE because historical waveform files were not kept and some evaluation records are missing (kept in the denominator as failures)"
   source: "verilog_llm:results/audits/readme_repro_v2/REPORT.md:1-8,33"
   status: verified
-  checked: 2026-11-16
+  checked: 2026-11-19
 
 - id: vl-model-sizes
-  text: "Model file sizes: fine-tuned E4B 5.2 GB, fine-tuned E2B 3.4 GB, stock E4B 8.7 GB, stock E2B Q8_0 5.0 GB, stock 31B 18.3 GB"
+  text: "Model file sizes: fine-tuned E4B 5.2 GB, fine-tuned E2B 3.4 GB, stock E4B 8.7 GB, stock E2B Q8_0 5.0 GB, stock E2B UD-IQ3_XXS 2.4 GB, stock 31B 18.3 GB"
   source: "verilog_llm:results/portfolio_2026-10-12/results.json (artifact bytes); 31B: gemma-4-31B-it-Q4_K_M.gguf in the model archive drive, 18,323,733,440 bytes"
   status: verified
-  checked: 2026-11-16
+  checked: 2026-11-19
 
 # ---------------------------------------------------------------- gpuq
 - id: gpuq-policy
@@ -111,30 +111,31 @@
   checked: 2026-11-16
 
 - id: gpuq-jobs
-  text: "325 jobs scheduled 2026-11-10 to 2026-11-16: 234 completed, 40 failed (job exit), 32 cancelled, 4 timed out, 3 interrupted by reboot; about 98 GPU-hours of run time in finished runs"
+  text: "325 jobs scheduled 2026-11-10 to 2026-11-16: 234 completed, 40 failed (job exit), 32 cancelled, 4 timed out, 3 interrupted by reboot; about 98 GPU-hours of run time in finished runs. These 313 of 325 jobs had finished at the cutoff (2026-11-17 00:00 UTC, 2026-11-16 17:00 Arizona time); 12 were still queued or running"
   source: "gpuq event log (~/.local/state/gpuq/events.jsonl) via scripts/gpuq_stats.py, cutoff 2026-11-17T00:00Z (2026-11-16 17:00 Arizona time)"
-  caveat: "Snapshot at the stated cutoff; 12 jobs were still queued or running then. Re-run scripts/gpuq_stats.py with a new cutoff before publishing. Failed = the job's own command failed, not the scheduler. Run time sums RUNNING-to-exit intervals (97.7 h)."
+  caveat: "Snapshot at the stated cutoff; 12 jobs were still queued or running then, so the outcome counts cover 313 of 325 jobs (234+40+32+4+3). Re-run scripts/gpuq_stats.py with a new cutoff before publishing. Failed = the job's own command failed, not the scheduler. Run time sums RUNNING-to-exit intervals (97.7 h)."
   status: live-snapshot
   checked: 2026-11-16
 
 - id: gpuq-jobs-per-day
-  text: "Jobs submitted per day (Arizona dates): Nov 10 55, Nov 11 49, Nov 12 42, Nov 13 87, Nov 14 36, Nov 15 36, Nov 16 20 (325 total, 2026-11-10 to 2026-11-16)"
+  text: "Jobs submitted per day (Arizona dates): Nov 10 55, Nov 11 49, Nov 12 42, Nov 13 87, Nov 14 36, Nov 15 36, Nov 16 20 (325 total, 2026-11-10 to 2026-11-16; snapshot cutoff 2026-11-16 17:00 Arizona time, 2026-11-17 00:00 UTC)"
   source: "gpuq event log via scripts/gpuq_stats.py, cutoff 2026-11-17T00:00Z"
-  caveat: "2026-11-16 is a partial day (to 17:00)."
+  caveat: "2026-11-16 is a partial day (to 17:00 Arizona time, 2026-11-17 00:00 UTC)."
   status: live-snapshot
   checked: 2026-11-16
 
 - id: gpuq-size
-  text: "About 3.3k lines of Python, 88 test functions, including real systemd transient-unit integration tests"
-  source: "gpuq:gpuq/*.py, gpuq:tests/"
+  text: "About 4,950 lines of Python (4,952 in tracked non-test .py files) and 145 test functions, including real systemd transient-unit integration tests (counted 2026-11-19)"
+  source: "git ls-files '*.py' (excluding tests/) | wc -l; grep -c 'def test_' over tests/*.py; counted 2026-11-19"
+  caveat: "Test suite not re-run for this count. The earlier 3.3k lines / 88 tests figure predates Long Bake and RAM admission."
   status: verified
-  checked: 2026-11-16
+  checked: 2026-11-19
 
-- id: gpuq-tests-pass
-  text: "Full test suite passes: 88 passed in 71 s"
-  source: "pytest -q tests, run 2026-11-16 on the workstation"
+- id: gpuq-features
+  text: "Auto-approve tier for jobs capped at 6 hours or less (longer needs owner approval); night window 00:00-08:00 local time (00:00 to 08:00); RAM admission; Long Bake preemptible multi-session campaigns with one owner approval per campaign"
+  source: "gpuq:config.example.toml:47-50; gpuq:README.md:26,50,54-56"
   status: verified
-  checked: 2026-11-16
+  checked: 2026-11-19
 
 - id: gpuq-cooperative
   text: "Approvals are cooperative, not enforced: any process running as the lab user can bypass the queue (owner decision)"
@@ -144,10 +145,10 @@
 
 # ---------------------------------------------------------------- labctl
 - id: labctl-wakes
-  text: "533 agent wakes over 5.92 days (5.9) (2026-11-10 to 2026-11-15); 79 were GPU-job-completion wakes"
-  source: "labctl:docs/metrics/streamline-v1-before.md:3-19"
+  text: "533 agent wakes over 5.92 days (5.9) (2026-11-10 00:00 to 2026-11-15 22:00 MST); 79 were GPU-job-completion wakes"
+  source: "labctl:docs/metrics/streamline-v1-before.md:1-3,9"
   status: verified
-  checked: 2026-11-16
+  checked: 2026-11-19
 
 - id: labctl-wakes-detail
   text: "Wakes by role over the same 5.92 days: lead 358, director 116, track 59 (533 total). Most common wake triggers: GPU job finished 79; task marked done 69; task created 67; report filed with task submitted 36; task submitted 25; directive notice 25"
@@ -157,16 +158,17 @@
   checked: 2026-11-16
 
 - id: labctl-size
-  text: "About 6.5k lines of standard-library Python; 372 test functions"
-  source: "labctl:labctl/**/*.py (recursive), labctl:tests/"
+  text: "About 7,000 lines of standard-library Python (7,049 in tracked labctl/*.py); 428 test functions (counted 2026-11-19)"
+  source: "git ls-files 'labctl/*.py' | xargs wc -l; grep -c 'def test_' over tests/*.py; counted 2026-11-19"
+  caveat: "Test suite not re-run for this count. Earlier figures (6.5k lines, 372 functions, 425 passed on 2026-11-16) predate later changes."
   status: verified
-  checked: 2026-11-16
+  checked: 2026-11-19
 
-- id: labctl-tests-pass
-  text: "Full test suite passes: 425 passed (372 test functions plus parametrized cases) in 93 s"
-  source: "pytest -q tests, run 2026-11-16T23:13Z on the workstation"
+- id: labctl-guardrails
+  text: "Per-directive wake budgets (default 12; exhaustion raises an owner decision), path grants (10 minutes to 14 days), limited-use notify tokens (1-20 uses; normal-priority events to one target, spent by detached jobs); a maintainer agent role whose commits run the test suite first"
+  source: "labctl:docs/DESIGN.md:191; labctl:labctl/core.py:285,703; labctl:labctl/config.py:27; labctl agents (maintainer:labctl)"
   status: verified
-  checked: 2026-11-16
+  checked: 2026-11-19
 
 # ---------------------------------------------------------------- FPGA
 - id: fpga-sim
@@ -183,11 +185,11 @@
   checked: 2026-11-16
 
 - id: fpga-timing
-  text: "Timing closed at 100 MHz with +1.657 ns worst negative slack (Vivado 2024.1, xc7z020); on the board the fabric clock read back as 62.5 MHz"
-  source: "fpga-neural-lab:research/physmod-v1/REPORT.md:7,29"
-  caveat: "100 MHz timing is a Vivado implementation result. The board ran the design at 62.5 MHz (FCLK0 read-back; cause not investigated), so 100 MHz operation was not exercised in hardware."
-  status: verified
-  checked: 2026-11-16
+  text: "Timing closed at 100 MHz with +1.657 ns worst negative slack (Vivado 2024.1, xc7z020); on the board the fabric clock read back as 62.5 MHz. Cause: Vivado default clock plan (33.333 MHz crystal) vs the board's 50 MHz reference. A later diagnostic measured 99.998 MHz"
+  source: "fpga-neural-lab:research/physmod-v1/REPORT.md:7,29; fpga-neural-lab:lab/STATUS.md:9,82"
+  caveat: "100 MHz timing is a Vivado implementation result. The board ran the design at 62.5 MHz (FCLK0 read-back). Cause since found (evidence in STATUS.md): the V1 block design used Vivado's default PS7 clock plan (33.333 MHz crystal) while the board has a 50 MHz reference, so divisors meant for 100 MHz gave 62.5 MHz. A later diagnostic measured FCLK0 at 99.998 MHz; the board's reference clock is 50 MHz and the Vivado default plan assumes a 33.333 MHz crystal (fix applied in the V1b build, not V1); the V1 streaming core has not been re-run at 100 MHz. V1 counts and parity are unaffected."
+  status: verified-caveated
+  checked: 2026-11-19
 
 - id: fpga-commissioning
   text: "Board commissioning: raw TCP about 645/525 Mbit/s; 30-minute soak passed at 52.9-56.4 C"
@@ -285,8 +287,8 @@
   checked: 2026-11-16
 
 - id: rocm-liger
-  text: "Fused RMSNorm+RoPE+SwiGLU kernels: 1.289x speed at 0.867x memory; adding FFN checkpointing: 1.179x speed at 0.669x memory; both passed 100-step loss parity, gradient agreement (cosine >= 0.99997) and bitwise-resume checks; one seed, runs up to 300 steps"
-  source: "rdna4-training-lab:docs/R9700_TRAINING_GUIDE_v2.md:24-25"
+  text: "Fused RMSNorm+RoPE+SwiGLU kernels: 1.289x speed at 0.867x memory; adding FFN checkpointing: 1.179x speed at 0.669x memory; both passed 100-step loss parity, gradient agreement (cosine >= 0.99997) and bitwise-resume checks; one seed, runs up to 300 steps. Fused-kernel speed from 3 runs (1.287x to 1.289x) against 13 interleaved baseline runs"
+  source: "rdna4-training-lab:docs/R9700_TRAINING_GUIDE_v2.md:24-25; rdna4-training-lab:research/train-baseline-v1/results/J4b/README.md:7"
   caveat: "One seed, runs up to 300 steps (guide line 7)."
   status: verified
   checked: 2026-11-16
@@ -304,10 +306,11 @@
   status: verified
 
 - id: corpus-v9
-  text: "V9 corpus release: 745.2M training and 24.0M validation tokens, split by text family, validated 27/27 acceptance checks, hash-pinned manifest"
-  source: "ancient-corpus:PROJECT-STATUS.md:7; ancient-corpus:catalog/releases/historical-snapshots-v9/MANIFEST.json (publication)"
-  status: verified
-  checked: 2026-11-16
+  text: "V9 corpus (earlier internal research, not a release): 745.2M training and 24.0M validation tokens, split by text family, validated 27/27 acceptance checks, hash-pinned manifest. Since 2026-11-18 it is internal-research-only because about 85% of V9 words fail the rights gate."
+  source: "ancient-corpus:PROJECT-STATUS.md:7; ancient-corpus:catalog/releases/historical-snapshots-v9/MANIFEST.json (publication); ancient-corpus:PROJECT-STATUS.md (2026-11-19 public-release reset); ancient-corpus:lab/STATUS.md:787-789"
+  caveat: "Not releasable. The clean set is V10 candidate r5."
+  status: verified-caveated
+  checked: 2026-11-19
 
 - id: corpus-v9-languages
   text: "V9 training tokens by language: Latin 632855102; Ancient Greek 70061790; Sanskrit 30957993; Syriac 6231483; Akkadian 2198070; Egyptian 1194570; Sumerian 601617; Arabic 563677; Coptic 346220; Tibetan 101316; K'iche' 53560; Tamil 46970 (sum 745212368; Latin about 85%)"
@@ -317,11 +320,11 @@
   checked: 2026-11-16
 
 - id: corpus-360m-run
-  text: "355.6M-parameter model trained to 360M tokens on V9; diagnostic 2.180 bits per character on a 1% sample"
-  source: "ancient-corpus:research/latin-curated-preparation-v2/T3-COMPLETION-VERIFICATION.md:9"
-  caveat: "Diagnostic only; full evaluation not run. Do not present as a model result."
+  text: "355.6M-parameter model trained to 360M tokens on V9 (later continued to 750M tokens); diagnostic 2.180 bits per character on a 1% sample. Internal research only: V9-trained checkpoints are non-releasable."
+  source: "ancient-corpus:research/latin-curated-preparation-v2/T3-COMPLETION-VERIFICATION.md:9; ancient-corpus:lab/STATUS.md:175-178 (750M continuation), 787-789; ancient-corpus:PROJECT-STATUS.md (2026-11-19 public-release reset)"
+  caveat: "Diagnostic only; full evaluation not run. Do not present as a model result or a release."
   status: verified-caveated
-  checked: 2026-11-16
+  checked: 2026-11-19
 
 - id: corpus-retrieval
   text: "Retrieval pilot: hybrid lexical+dense fusion Recall@10 0.4567 (0.457) vs 0.3065 (0.307) lexical, 0.3330 (0.333) dense, on a 35,000-passage index; recall measured on the 120 answerable queries of 150"
@@ -346,10 +349,11 @@
   checked: 2026-11-16
 
 - id: nb-s2
-  text: "Learned memory for a frozen model: benchmark showed a generic shift, not episode-specific recall"
-  source: "s2-memory-lab:EXPERIMENT_REPORT.md:493"
-  status: null
-  checked: 2026-11-16
+  text: "Learned memory for a frozen model: the registered S2-B-V2 gate passed 2026-11-08 (32 of 32 episodes, shuffled control 0%, text ceiling 95.3%). A post-hoc, unregistered selectivity diagnostic found STEERING (the memory forces its answer on unrelated questions). The follow-up binding gate V1c was INCOMPLETE_UNINTERPRETABLE and the gist readout PROMPT_LOCKED."
+  source: "s2-memory-lab:EXPERIMENT_LEDGER.md:92-110"
+  caveat: "The steering and gist-readout (PROMPT_LOCKED) results are post-hoc diagnostics, not gate results."
+  status: verified-caveated
+  checked: 2026-11-19
 
 - id: nb-doc-to-weights
   text: "Document-to-weights hypernetwork: null at pilot scale (difference -0.019, interval -0.099 to +0.057)"
@@ -359,10 +363,10 @@
 
 # ---------------------------------------------------------------- Lab
 - id: lab-hardware
-  text: "One workstation: AMD Radeon AI PRO R9700 (32 GB, ROCm) and NVIDIA RTX 4060 Ti (8 GB, CUDA), Ryzen 9 5900X; plus a PYNQ-Z2 (Zynq-7020) board"
-  source: "lscpu / free on the workstation 2026-11-16; fpga-neural-lab:docs/HARDWARE_INVENTORY.md"
+  text: "One workstation: AMD Radeon AI PRO R9700 (32 GB, ROCm) and NVIDIA RTX 4060 Ti (8 GB, CUDA), Ryzen 9 5900X. FPGA boards: a PYNQ-Z2 (Zynq-7020) for the hardware-in-the-loop project; for the 2024 CPU, a Nexys A7 (Artix-7) and a Real Digital Boolean Board (Spartan-7)"
+  source: "lscpu / free on the workstation 2026-11-16; fpga-neural-lab:docs/HARDWARE_INVENTORY.md; CPU boards as in claim cpu-boards"
   status: verified
-  checked: 2026-11-16
+  checked: 2026-11-19
 
 # ---------------------------------------------------------------- Research library
 - id: rl-papers

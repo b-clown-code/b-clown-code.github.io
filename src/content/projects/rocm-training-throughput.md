@@ -1,8 +1,8 @@
 ---
 title: Training throughput on an AMD GPU
 summary: Measured which kernel and memory options actually speed up model training on an AMD R9700 under ROCm, with correctness checks on every change.
-status: Complete
-order: 5
+status: Study complete; lab ongoing
+order: 6
 area: ml
 metric: "1.289× training speed at 0.867× memory"
 tags: [PyTorch, ROCm, Liger kernels, profiling]
@@ -24,7 +24,7 @@ Most training-performance advice is written for NVIDIA GPUs. I needed to know wh
 
 ## Results
 
-Every configuration is one seed, run for up to 300 steps; only the baseline was repeated (3 runs).
+Every configuration uses one seed and runs for up to 300 steps. The baseline was repeated, and the adopted fused-kernel configuration was timed over 3 runs (1.287x to 1.289x) against 13 interleaved baseline runs. The other rows are single runs.
 
 | Configuration | Speed | Peak memory | Adopted |
 |---|---:|---:|---|
@@ -46,4 +46,4 @@ Every configuration is one seed, run for up to 300 steps; only the baseline was 
 
 ## Who did what
 
-I chose the questions and set the adoption rules. AI agents in my lab wrote the harness and ran the measurements, and I reviewed the results.
+I chose the questions and set the adoption rules, and I reviewed the results. AI coding agents wrote the harness and ran the measurements under my direction ([how I use AI agents](/about/#how-i-use-ai-agents)).

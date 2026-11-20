@@ -2,7 +2,7 @@
 title: Research library — a mapped reading list
 summary: The papers behind my ML and hardware work, kept as a knowledge graph and published as a searchable catalog and topic map.
 status: In progress
-order: 6
+order: 8
 area: ml
 metric: "305 papers, 1,812 graph links"
 tags: [Knowledge graph, Python, TypeScript, Canvas]

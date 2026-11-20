@@ -1,6 +1,6 @@
 ---
 title: About
-claims: [lab-hardware]
+claims: [lab-hardware, cpu-boards]
 ---
 
 # About
@@ -12,12 +12,12 @@ I'm finishing a B.S.E. in Computer Systems Engineering at Arizona State Universi
 Everything here runs on hardware I set up and operate myself:
 
 - **One workstation.** An AMD Radeon AI PRO R9700 (32 GB, ROCm) and an NVIDIA RTX 4060 Ti (8 GB, CUDA), sharing a Ryzen 9 5900X.
-- **One FPGA board.** A PYNQ-Z2 (Zynq-7020).
+- **FPGA boards.** A PYNQ-Z2 (Zynq-7020) for the hardware-in-the-loop project. For the 2024 CPU, a Nexys A7 (Artix-7) and a Real Digital Boolean Board (Spartan-7).
 - **Software.** Ubuntu, systemd services, llama.cpp and vLLM for inference, and PyTorch for training.
 
 ## How I use AI agents
 
-All of the code in my lab projects (everything on this site except the 2024 CPU) was written by AI coding agents (Claude and Codex), most of them running inside an [orchestrator](/projects/lab-orchestrator/) whose design I directed. My part is the engineering judgment around the code: what to build, the rules the agents operate under, what runs on the GPUs, and whether a result is trustworthy. Each project page has a "Who did what" section that says where that line falls.
+I direct AI coding agents (Claude and Codex) and check their work. They wrote all of the code in my lab projects, which is everything on this site except the 2024 CPU, and most of them run inside an [orchestrator](/projects/lab-orchestrator/) whose design I directed. My job is the engineering around the code: deciding what to build, setting the rules the agents work under, choosing what runs on the GPUs, and checking whether a result can be trusted. Each project page has a "Who did what" section that says where that line falls.
 
 ## Earlier projects
 

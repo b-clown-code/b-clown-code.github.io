@@ -5,7 +5,7 @@
  "form": "column",
  "unit": "jobs",
  "title": "Jobs submitted per day",
- "caption": "Arizona dates. 2026-11-16 is a partial day.",
+ "caption": "Arizona dates. Snapshot cutoff 2026-11-16 17:00 (2026-11-17 00:00 UTC), so Nov 16 is a partial day.",
  "rows": [
   {
    "label": "Nov 10",
